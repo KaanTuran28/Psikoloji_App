@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PsikoTarama-Simülasyon</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-title">
+      <span class="topbar-logo">PsikoTarama</span>
+      <span class="topbar-subtitle">Klinik Tanı Simülasyonu</span>
+    </div>
+    <div class="topbar-vitals">
+      <div class="vital">
+        <span class="vital-label">Kalan Süre</span>
+        <span id="time-value" class="vital-value">45 dk</span>
+      </div>
+      <div class="vital vital-rapport">
+        <span class="vital-label">Güven (Rapport)</span>
+        <div class="rapport-bar">
+          <div id="rapport-fill" class="rapport-fill" style="width: 50%;"></div>
+        </div>
+        <span id="rapport-value" class="vital-value">50/100</span>
+      </div>
+    </div>
+    <button id="btn-new-case" class="btn btn-primary" disabled>Yeni Vaka Başlat</button>
+  </header>
+
+  <div class="layout">
+
+    <!-- LEFT: Patient Info & Test Results -->
+    <aside class="panel sidebar">
+      <section class="panel-section">
+        <h3 class="panel-heading">🩺 Hasta Bilgisi</h3>
+        <div class="patient-card">
+          <div id="patient-avatar" class="patient-avatar">—</div>
+          <div class="patient-card-text">
+            <p id="patient-name" class="patient-name">—</p>
+            <p id="patient-meta" class="patient-meta">Aktif vaka yok</p>
+          </div>
+        </div>
+        <p id="case-brief" class="case-brief"></p>
+      </section>
+
+      <section class="panel-section">
+        <h3 class="panel-heading">🧪 Psikometrik Testler</h3>
+        <div id="test-buttons" class="test-buttons"></div>
+      </section>
+
+      <section class="panel-section">
+        <h3 class="panel-heading">📊 Test Sonuçları</h3>
+        <div id="test-results" class="test-results">
+          <p class="muted-note">Henüz test uygulanmadı.</p>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-heading-row">
+          <h3 class="panel-heading">📜 Vaka Geçmişi</h3>
+          <button id="btn-clear-history" class="btn-link" title="Tüm geçmişi temizle">Temizle</button>
+        </div>
+        <div id="case-history" class="case-history">
+          <p class="muted-note">Henüz tamamlanmış vaka yok.</p>
+        </div>
+      </section>
+    </aside>
+
+    <!-- CENTER: Interview / Dialogue -->
+    <main class="panel interview">
+      <h3 class="panel-heading">💬 Görüşme</h3>
+      <div id="time-up-banner" class="time-up-banner hidden">
+        ⏰ Süre doldu! Artık soru soramaz veya test uygulayamazsınız — elinizdeki bilgilerle tanınızı koyun.
+      </div>
+      <div id="dialogue-log" class="dialogue-log">
+        <div class="dialogue-entry dialogue-entry--system">Bir vaka başlatmak için sağ üstteki "Yeni Vaka Başlat" düğmesine basın.</div>
+      </div>
+      <div class="question-panel">
+        <h4 class="question-panel-heading">🗂 Soru Seçenekleri</h4>
+        <div id="question-buttons" class="question-buttons"></div>
+      </div>
+    </main>
+
+    <!-- RIGHT: Diagnostic Notepad -->
+    <aside class="panel notepad">
+      <h3 class="panel-heading">📝 Tanısal Not Defteri</h3>
+      <p class="muted-note">Hastada gözlemlediğiniz DSM-5 ölçütlerini işaretleyin.</p>
+      <div id="criteria-list" class="criteria-list"></div>
+
+      <div class="diagnosis-submit">
+        <h3 class="panel-heading">🎯 Tanı Koy</h3>
+        <div id="diagnosis-options" class="diagnosis-options"></div>
+        <button id="btn-submit-diagnosis" class="btn btn-accent">Tanıyı Onayla</button>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- Start overlay -->
+<div id="start-overlay" class="overlay">
+  <div class="overlay-card">
+    <div id="start-loading">
+      <h2>PsikoTarama-Simülasyon</h2>
+      <p>Klinik veriler yükleniyor...</p>
+    </div>
+    <div id="start-welcome" class="hidden">
+      <h2>🩺 PsikoTarama-Simülasyon'a Hoş Geldiniz</h2>
+      <p class="welcome-intro">
+        Bir klinisyen olarak hastayı görüşün, gerekirse psikometrik test
+        uygulayın ve süreniz dolmadan doğru DSM-5 tanısını koyun.
+      </p>
+      <ul class="welcome-steps">
+        <li><strong>1. Görüşün</strong> — sorular sorarak belirtileri ortaya çıkarın.</li>
+        <li><strong>2. Test Uygulayın</strong> — testler yalanı by-pass eder ama zaman alır.</li>
+        <li><strong>3. Not Alın</strong> — gözlemlediğiniz DSM-5 kriterlerini işaretleyin.</li>
+        <li><strong>4. Tanı Koyun</strong> — süreniz dolmadan tanınızı onaylayın.</li>
+      </ul>
+      <button id="btn-start-first-case" class="btn btn-primary btn-large">İlk Vakayı Başlat</button>
+    </div>
+  </div>
+</div>
+
+<!-- Result overlay -->
+<div id="result-overlay" class="overlay hidden">
+  <div class="overlay-card">
+    <h2>Vaka Sonucu</h2>
+    <div id="result-body"></div>
+    <button id="btn-restart" class="btn btn-primary">Yeni Vaka Başlat</button>
+  </div>
+</div>
+
+<script src="js/GameEngine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+{
+  "patientNames": [
+    "Ayşe Yılmaz", "Mehmet Demir", "Zeynep Kaya", "Emre Çelik",
+    "Elif Aydın", "Burak Şahin", "Selin Arslan", "Can Öztürk",
+    "Deniz Polat", "Gizem Koç", "Murat Aksoy", "Pınar Yıldız"
+  ],
+
+  "occupations": [
+    "Üniversite Öğrencisi", "Yazılım Mühendisi", "Hemşire",
+    "Emekli Öğretmen", "Esnaf", "Grafik Tasarımcı", "Kamyon Şoförü",
+    "Avukat", "Aşçı", "Muhasebeci"
+  ],
+
+  "rootDiagnosis": [
+    {
+      "id": "mdd",
+      "label": "Majör Depresif Bozukluk",
+      "code": "MDD",
+      "nextSteps": "Bilişsel davranışçı terapi (BDT) ve/veya farmakoterapi seçenekleri hasta ile birlikte değerlendirilebilir; intihar riski açısından yakın takip önerilir.",
+      "symptomPool": [
+        { "id": "depressed_mood", "text": "Çoğu gün, gün boyu süren çökkün duygudurum" },
+        { "id": "anhedonia", "text": "Eskiden zevk alınan etkinliklere karşı belirgin ilgi/zevk kaybı" },
+        { "id": "sleep_disturbance", "text": "Neredeyse her gün uykusuzluk ya da aşırı uyuma" },
+        { "id": "fatigue", "text": "Enerji kaybı veya yorgunluk hissi" },
+        { "id": "worthlessness", "text": "Değersizlik veya aşırı/uygunsuz suçluluk duygusu" },
+        { "id": "concentration_issues", "text": "Düşünme, odaklanma veya karar vermede güçlük" },
+        { "id": "appetite_change", "text": "İştah veya kiloda belirgin değişim" },
+        { "id": "suicidal_ideation", "text": "Yineleyen ölüm düşünceleri veya intihar düşüncesi" }
+      ]
+    },
+    {
+      "id": "bipolar1",
+      "label": "Bipolar I Bozukluk",
+      "code": "BP-I",
+      "nextSteps": "Mood stabilizatör tedavisi başlanması ve psikiyatri polikliniğinde yakın takip önerilir; manik atağın şiddetine göre hastaneye yatış değerlendirilebilir.",
+      "symptomPool": [
+        { "id": "elevated_mood", "text": "Anormal derecede yükselmiş, taşkın veya kabarmış duygudurum" },
+        { "id": "grandiosity", "text": "Abartılı özgüven veya büyüklük hissi" },
+        { "id": "decreased_sleep_need", "text": "Azalmış uyku ihtiyacı (ör. 3 saat uyku yeterli hissi)" },
+        { "id": "pressured_speech", "text": "Her zamankinden daha konuşkan olma, konuşma baskısı" },
+        { "id": "racing_thoughts", "text": "Düşünce uçuşması veya fikirlerin birbirini kovaladığı öznel deneyim" },
+        { "id": "distractibility", "text": "Dikkatin kolayca önemsiz uyaranlara kayması" },
+        { "id": "risky_behavior", "text": "Riskli/zarar verici etkinliklere aşırı katılım (çılgınca harcama vb.)" }
+      ]
+    },
+    {
+      "id": "gad",
+      "label": "Yaygın Anksiyete Bozukluğu",
+      "code": "GAD",
+      "nextSteps": "Anksiyeteye yönelik BDT teknikleri ve gevşeme egzersizleri önerilebilir; gerekirse farmakoterapi ile desteklenebilir.",
+      "symptomPool": [
+        { "id": "excessive_worry", "text": "Birçok olay/etkinlik hakkında aşırı, kontrol edilemeyen kaygı" },
+        { "id": "restlessness", "text": "Huzursuzluk, yerinde duramama veya gergin hissetme" },
+        { "id": "muscle_tension", "text": "Kas gerginliği" },
+        { "id": "irritability_anx", "text": "Kolay sinirlenme" },
+        { "id": "sleep_anx", "text": "Kaygıya bağlı uyku bozukluğu (uykuya dalmada güçlük, huzursuz uyku)" },
+        { "id": "concentration_anx", "text": "Zihnin boşaldığı hissi veya odaklanma güçlüğü" }
+      ]
+    },
+    {
+      "id": "panic",
+      "label": "Panik Bozukluk",
+      "code": "PD",
+      "nextSteps": "Panik atak yönetimine yönelik BDT ve maruz bırakma teknikleri, gerekirse anksiyolitik tedavi ile birlikte planlanabilir.",
+      "symptomPool": [
+        { "id": "panic_attacks", "text": "Beklenmedik, tekrarlayan ani yoğun korku/rahatsızlık atakları" },
+        { "id": "palpitations", "text": "Çarpıntı, kalp atışında hızlanma" },
+        { "id": "fear_of_dying", "text": "Kontrolünü kaybetme veya öleceğine dair yoğun korku" },
+        { "id": "sweating_trembling", "text": "Terleme, titreme veya sarsılma" },
+        { "id": "avoidance_behavior", "text": "Yeni bir atak korkusuyla yer veya durumlardan kaçınma" },
+        { "id": "derealization", "text": "Gerçek dışılık (derealizasyon) ya da kendinden kopma (depersonalizasyon) hissi" }
+      ]
+    },
+    {
+      "id": "ocd",
+      "label": "Obsesif Kompulsif Bozukluk",
+      "code": "OKB",
+      "nextSteps": "Maruz bırakma ve tepki önleme (ERP) terapisi ile SSRI tedavisi kombinasyonu değerlendirilebilir.",
+      "symptomPool": [
+        { "id": "obsessive_thoughts", "text": "İstemsiz, tekrarlayan ve rahatsız edici düşünceler (obsesyonlar)" },
+        { "id": "compulsive_behavior", "text": "Bu düşünceleri bastırmak için tekrarlayan davranışlar (kompulsiyonlar) sergileme" },
+        { "id": "contamination_fear", "text": "Kirlenme veya mikrop bulaşma konusunda aşırı korku" },
+        { "id": "checking_behavior", "text": "Kapı, ocak, kilit gibi şeyleri defalarca kontrol etme ihtiyacı" },
+        { "id": "symmetry_need", "text": "Eşyaların simetrik/düzenli olması konusunda katı ihtiyaç" },
+        { "id": "time_consuming_rituals", "text": "Günde bir saatten fazla zaman alan ritüeller" },
+        { "id": "insight_distress", "text": "Düşünce ve davranışların anlamsız olduğunun farkında olup buna rağmen durduramama" }
+      ]
+    },
+    {
+      "id": "ptsd",
+      "label": "Travma Sonrası Stres Bozukluğu",
+      "code": "TSSB",
+      "nextSteps": "Travma odaklı BDT (ör. EMDR) ve gerekirse farmakoterapi ile güvenli bir takip planı oluşturulmalıdır.",
+      "symptomPool": [
+        { "id": "intrusive_memories", "text": "Travmatik olayı istemsizce tekrar tekrar hatırlama (flashback)" },
+        { "id": "nightmares", "text": "Travmayla ilgili kâbuslar görme" },
+        { "id": "trauma_avoidance", "text": "Travmayı hatırlatan yer, kişi veya durumlardan kaçınma" },
+        { "id": "negative_cognition", "text": "Kendine veya dünyaya dair olumsuz inançlarda belirgin artış" },
+        { "id": "hypervigilance", "text": "Sürekli tetikte olma, aşırı uyanıklık hali" },
+        { "id": "exaggerated_startle", "text": "Ani seslere/hareketlere abartılı irkilme tepkisi" },
+        { "id": "emotional_numbness", "text": "Duygusal olarak hissizleşme, yakınlarından kopma hissi" }
+      ]
+    }
+  ],
+
+  "distractors": [
+    {
+      "id": "somatic_stomach",
+      "label": "Somatik Şikayet: Mide Rahatsızlığı",
+      "type": "somatic",
+      "referralReason": "Aylardır süren mide ağrıları yüzünden önce dahiliyeye başvurmuş; tetkiklerde organik bir neden bulunamayınca psikiyatriye yönlendirilmiş.",
+      "symptomPool": [
+        { "id": "stomach_ache", "text": "Sık sık mide ağrısından şikayet ediyor" },
+        { "id": "nausea", "text": "Bulantı hissi tarif ediyor" }
+      ]
+    },
+    {
+      "id": "defensive_denial",
+      "label": "Savunmacı Tutum: İnkâr / Saklama",
+      "type": "behavioral",
+      "referralReason": "Buraya kendi isteğiyle değil, ailesinin ısrarı üzerine gelmiş; görüşmeye biraz gönülsüz başlıyor.",
+      "symptomPool": [
+        { "id": "denial", "text": "Hiçbir sorunu olmadığını ısrarla savunuyor" },
+        { "id": "minimization", "text": "Belirtilerini sürekli küçümsüyor" }
+      ]
+    },
+    {
+      "id": "family_stress",
+      "label": "Aile Kaynaklı Stres Faktörü",
+      "type": "psychosocial",
+      "referralReason": "Son dönemde ailesiyle yaşadığı yoğun tartışmalar nedeniyle aile hekimi tarafından yönlendirilmiş.",
+      "symptomPool": [
+        { "id": "family_conflict", "text": "Aile içi çatışmalardan sıkça bahsediyor" },
+        { "id": "financial_stress", "text": "Maddi sıkıntılardan yakınıyor" }
+      ]
+    },
+    {
+      "id": "somatic_headache",
+      "label": "Somatik Şikayet: Baş Ağrısı",
+      "type": "somatic",
+      "referralReason": "Nörolojiye baş ağrısı şikayetiyle başvurmuş; görüntülemelerde bir bulguya rastlanmayınca psikiyatriye sevk edilmiş.",
+      "symptomPool": [
+        { "id": "headache", "text": "Sık baş ağrısı tarif ediyor" },
+        { "id": "dizziness", "text": "Baş dönmesi hissi tanımlıyor" }
+      ]
+    },
+    {
+      "id": "substance_use",
+      "label": "Madde Kullanımı İması (Dikkat Dağıtıcı)",
+      "type": "behavioral",
+      "referralReason": "İş yerinde son zamanlarda fark edilen performans düşüklüğü sonrası önce aşırı kafein tüketimi ve düzensiz uyku gündeme gelmiş, sonra psikiyatriye yönlendirilmiş.",
+      "symptomPool": [
+        { "id": "caffeine_use", "text": "Aşırı kafein tüketimi" },
+        { "id": "sleep_hygiene", "text": "Kötü uyku hijyeni alışkanlıkları" }
+      ]
+    }
+  ],
+
+  "questions": [
+    { "id": "q_mood", "category": "mood", "text": "Son zamanlarda kendinizi nasıl hissediyorsunuz?", "targetSymptom": "depressed_mood", "timeCost": 5, "rapportEffect": 2, "sensitive": false, "truthfulResponse": "Açıkçası... çok kötü hissediyorum. Günlerdir içim karanlık gibi.", "deceptiveResponse": "İyiyim sayılır, biraz yorgunum sadece.", "absentResponse": "Duygu durumum gayet normal, şikayetim yok." },
+    { "id": "q_anhedonia", "category": "mood", "text": "Eskiden keyif aldığınız şeylerden hâlâ keyif alabiliyor musunuz?", "targetSymptom": "anhedonia", "timeCost": 5, "rapportEffect": 2, "sensitive": false, "truthfulResponse": "Hayır... artık hiçbir şey eskisi gibi tat vermiyor.", "deceptiveResponse": "Eh işte, bazen biraz daha az ama önemli değil.", "absentResponse": "Hayır, hâlâ hobilerimden keyif alıyorum." },
+    { "id": "q_sleep", "category": "somatic", "text": "Uyku düzeninizde bir değişiklik fark ettiniz mi?", "targetSymptom": "sleep_disturbance", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Ya hiç uyuyamıyorum ya da bütün gün uyumak istiyorum.", "deceptiveResponse": "Normal uyuyorum, sorun yok.", "absentResponse": "Uykumla ilgili bir sıkıntı yok." },
+    { "id": "q_energy", "category": "somatic", "text": "Enerji seviyenizi nasıl tarif edersiniz?", "targetSymptom": "fatigue", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Sürekli bitkin hissediyorum, en küçük iş bile beni yoruyor.", "deceptiveResponse": "Normal, herkes gibi bazen yoruluyorum.", "absentResponse": "Enerjim gayet yerinde." },
+    { "id": "q_worthlessness", "category": "mood", "text": "Kendinizi değersiz ya da suçlu hissettiğiniz oluyor mu?", "targetSymptom": "worthlessness", "timeCost": 5, "rapportEffect": 3, "sensitive": true, "truthfulResponse": "Evet... bazen her şeyin benim suçum olduğunu düşünüyorum, hiçbir işe yaramıyorum sanki.", "deceptiveResponse": "Yok, öyle bir şey hissetmiyorum.", "absentResponse": "Hayır, kendimi değersiz hissetmiyorum." },
+    { "id": "q_concentration", "category": "cognitive", "text": "Konsantrasyonunuzda ya da karar vermede zorlanıyor musunuz?", "targetSymptom": "concentration_issues", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Basit bir kararı bile veremiyorum, kafam dağınık.", "deceptiveResponse": "Hayır, odaklanmam gayet iyi.", "absentResponse": "Konsantrasyonumla ilgili bir problem yok." },
+    { "id": "q_appetite", "category": "somatic", "text": "İştahınızda ya da kilonuzda bir değişiklik oldu mu?", "targetSymptom": "appetite_change", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Son haftalarda ya hiç yemek istemiyorum ya da durmadan atıştırıyorum.", "deceptiveResponse": "Hayır, iştahım hep aynı.", "absentResponse": "İştahımda bir değişiklik yok." },
+    { "id": "q_suicidal", "category": "risk", "text": "Hiç yaşamın anlamsız geldiği ya da kendinize zarar verme düşüncesi oldu mu?", "targetSymptom": "suicidal_ideation", "timeCost": 10, "rapportEffect": 5, "sensitive": true, "truthfulResponse": "Bazen artık burada olmasam daha iyi olur diye düşünüyorum...", "deceptiveResponse": "Hayır, asla öyle bir şey düşünmedim.", "absentResponse": "Hayır, böyle düşüncelerim hiç olmadı." },
+
+    { "id": "q_elevated_mood", "category": "mood", "text": "Kendinizi son zamanlarda olağandışı derecede enerjik ya da coşkulu hissettiniz mi?", "targetSymptom": "elevated_mood", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet! Kendimi inanılmaz güçlü ve mutlu hissediyorum, sanki her şeyi yapabilirim!", "deceptiveResponse": "Yok, normalim ben.", "absentResponse": "Hayır, duygu durumum dengeli." },
+    { "id": "q_grandiosity", "category": "cognitive", "text": "Kendinizi diğer insanlardan daha özel veya yetenekli mi görüyorsunuz?", "targetSymptom": "grandiosity", "timeCost": 5, "rapportEffect": 1, "sensitive": true, "truthfulResponse": "Aslında evet, bence çoğu insandan çok daha yetenekliyim, büyük işler başaracağım.", "deceptiveResponse": "Hayır, herkes gibiyim ben.", "absentResponse": "Hayır, kendimi başkalarından üstün görmüyorum." },
+    { "id": "q_sleep_need", "category": "somatic", "text": "Son zamanlarda daha az uyuyup yine de kendinizi dinç hissediyor musunuz?", "targetSymptom": "decreased_sleep_need", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Kesinlikle, 3 saat uyusam yetiyor, hiç yorgun hissetmiyorum.", "deceptiveResponse": "Hayır, normal saatlerde uyuyorum.", "absentResponse": "Uyku ihtiyacım hiç değişmedi." },
+    { "id": "q_pressured_speech", "category": "behavior", "text": "Çevrenizdekiler sizin çok hızlı ya da çok fazla konuştuğunuzu söylüyor mu?", "targetSymptom": "pressured_speech", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, durduramıyorum kendimi, fikirler aklımdan akıp gidiyor ve hepsini söylemem lazım!", "deceptiveResponse": "Hayır, normal konuşuyorum.", "absentResponse": "Hayır, böyle bir geri bildirim almadım." },
+    { "id": "q_racing_thoughts", "category": "cognitive", "text": "Düşünceleriniz bazen birbirini kovalıyor gibi mi hissediyorsunuz?", "targetSymptom": "racing_thoughts", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, kafamda yüzlerce fikir aynı anda dönüyor, yetişemiyorum bile.", "deceptiveResponse": "Yok, düşüncelerim gayet düzenli.", "absentResponse": "Hayır, öyle bir şey yaşamıyorum." },
+    { "id": "q_distractibility", "category": "cognitive", "text": "Dikkatinizin önemsiz şeylere kolayca kaydığını fark ediyor musunuz?", "targetSymptom": "distractibility", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bir konuya odaklanamıyorum, her şey dikkatimi dağıtıyor.", "deceptiveResponse": "Hayır, odaklanmam gayet iyi.", "absentResponse": "Hayır, dikkatimle ilgili bir sorun yok." },
+    { "id": "q_risky_behavior", "category": "behavior", "text": "Son zamanlarda riskli ya da dürtüsel kararlar aldınız mı (harcama, sürüş vb.)?", "targetSymptom": "risky_behavior", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, geçen hafta tüm birikimimi düşünmeden harcadım, harika bir fikir gibi gelmişti.", "deceptiveResponse": "Hayır, hep temkinliyimdir.", "absentResponse": "Hayır, riskli bir davranışım olmadı." },
+
+    { "id": "q_worry", "category": "mood", "text": "Birçok konu hakkında kontrol edemediğiniz bir kaygı hissediyor musunuz?", "targetSymptom": "excessive_worry", "timeCost": 5, "rapportEffect": 2, "sensitive": false, "truthfulResponse": "Evet, sürekli bir şeyler ters gidecek diye endişeleniyorum, durduramıyorum.", "deceptiveResponse": "Hayır, fazla kaygılı biri değilim.", "absentResponse": "Hayır, kaygı düzeyim normal." },
+    { "id": "q_restlessness", "category": "somatic", "text": "Kendinizi gergin ya da yerinde duramaz hissediyor musunuz?", "targetSymptom": "restlessness", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, sürekli huzursuzum, yerimde duramıyorum.", "deceptiveResponse": "Hayır, gayet sakinim.", "absentResponse": "Hayır, huzursuzluk hissetmiyorum." },
+    { "id": "q_muscle_tension", "category": "somatic", "text": "Bedeninizde sürekli bir gerginlik hissediyor musunuz?", "targetSymptom": "muscle_tension", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, omuzlarım ve boynum hep kasılı, hiç gevşeyemiyorum.", "deceptiveResponse": "Yok, vücudum rahat.", "absentResponse": "Hayır, kas gerginliğim yok." },
+    { "id": "q_irritability", "category": "behavior", "text": "Son zamanlarda her şeye daha kolay sinirleniyor musunuz?", "targetSymptom": "irritability_anx", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, ufacık şeylere bile çok sinirleniyorum.", "deceptiveResponse": "Hayır, her zamanki gibi sakinim.", "absentResponse": "Hayır, sinirlilik halim yok." },
+    { "id": "q_sleep_anx", "category": "somatic", "text": "Kaygılarınız uykunuzu etkiliyor mu?", "targetSymptom": "sleep_anx", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, kafamda dönen düşüncelerle uykuya dalamıyorum.", "deceptiveResponse": "Hayır, uykum kaygıdan etkilenmiyor.", "absentResponse": "Hayır, uyku sorunum yok." },
+    { "id": "q_concentration_anx", "category": "cognitive", "text": "Kaygılandığınızda zihniniz boşalıyor mu ya da odaklanamıyor musunuz?", "targetSymptom": "concentration_anx", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bazen ne söyleyeceğimi bile unutuyorum, zihnim bomboş kalıyor.", "deceptiveResponse": "Hayır, odaklanmam gayet net.", "absentResponse": "Hayır, böyle bir sıkıntım yok." },
+
+    { "id": "q_panic_attacks", "category": "risk", "text": "Hiç aniden gelen, çok yoğun bir korku/dehşet anı yaşadınız mı?", "targetSymptom": "panic_attacks", "timeCost": 10, "rapportEffect": 3, "sensitive": true, "truthfulResponse": "Evet, birden bire göğsüm sıkışıyor, sanki öleceğim hissine kapılıyorum.", "deceptiveResponse": "Hayır, öyle bir şey yaşamadım.", "absentResponse": "Hayır, panik atak yaşamadım." },
+    { "id": "q_palpitations", "category": "somatic", "text": "Kalbinizin aniden hızlandığını hissettiğiniz oluyor mu?", "targetSymptom": "palpitations", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, kalbim küt küt atmaya başlıyor, sanki göğsümden çıkacak gibi.", "deceptiveResponse": "Hayır, kalp atışım normal.", "absentResponse": "Hayır, çarpıntım yok." },
+    { "id": "q_fear_of_dying", "category": "mood", "text": "Bu anlarda öleceğinizi ya da kontrolünüzü kaybedeceğinizi mi düşünüyorsunuz?", "targetSymptom": "fear_of_dying", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, o anda gerçekten öleceğimi sanıyorum, çok korkutucu.", "deceptiveResponse": "Hayır, böyle bir korkum yok.", "absentResponse": "Hayır, öyle bir düşüncem olmuyor." },
+    { "id": "q_sweating", "category": "somatic", "text": "Bu anlarda terleme ya da titreme yaşıyor musunuz?", "targetSymptom": "sweating_trembling", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, ellerim titriyor ve birden terlemeye başlıyorum.", "deceptiveResponse": "Hayır, fiziksel bir belirti yok.", "absentResponse": "Hayır, terleme ya da titreme yaşamıyorum." },
+    { "id": "q_avoidance", "category": "behavior", "text": "Yeni bir atak yaşamamak için bazı yerlerden ya da durumlardan kaçınıyor musunuz?", "targetSymptom": "avoidance_behavior", "timeCost": 5, "rapportEffect": 2, "sensitive": false, "truthfulResponse": "Evet, kalabalık yerlere artık gitmiyorum, yine olur diye korkuyorum.", "deceptiveResponse": "Hayır, hayatım hiç değişmedi.", "absentResponse": "Hayır, kaçındığım bir durum yok." },
+    { "id": "q_derealization", "category": "cognitive", "text": "Bu anlarda kendinizden ya da çevrenizden kopmuş gibi hissettiğiniz oluyor mu?", "targetSymptom": "derealization", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, sanki rüyadaymışım gibi, her şey gerçek dışı geliyor.", "deceptiveResponse": "Hayır, her şey gayet net ve gerçek hissettiriyor.", "absentResponse": "Hayır, böyle bir his yaşamıyorum." },
+
+    { "id": "q_stomach", "category": "somatic", "text": "Mide ile ilgili herhangi bir şikayetiniz var mı?", "targetSymptom": "stomach_ache", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, midem sürekli ağrıyor, doktorlar bir şey bulamadı.", "deceptiveResponse": "Hayır, midemle ilgili bir sorun yok.", "absentResponse": "Hayır, mide şikayetim yok." },
+    { "id": "q_nausea", "category": "somatic", "text": "Bulantı hissettiğiniz oluyor mu?", "targetSymptom": "nausea", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, özellikle sabahları içim bulanıyor.", "deceptiveResponse": "Hayır, bulantım yok.", "absentResponse": "Hayır, bulantı hissetmiyorum." },
+    { "id": "q_denial", "category": "behavior", "text": "Buraya gelmenizin bir sebebi olduğunu düşünüyor musunuz?", "targetSymptom": "denial", "timeCost": 5, "rapportEffect": -1, "sensitive": true, "truthfulResponse": "Hayır, bence gerçekten bir sorunum yok, ailem beni zorla getirdi.", "deceptiveResponse": "Belki biraz... ama emin değilim.", "absentResponse": "Evet, yardıma ihtiyacım olduğunu düşünüyorum." },
+    { "id": "q_minimization", "category": "behavior", "text": "Yaşadığınız belirtiler günlük hayatınızı ne kadar etkiliyor?", "targetSymptom": "minimization", "timeCost": 5, "rapportEffect": -1, "sensitive": true, "truthfulResponse": "Yok canım, o kadar da önemli değil, abartmayalım.", "deceptiveResponse": "Aslında biraz ciddi olabilir, tam bilmiyorum.", "absentResponse": "Belirtilerimi olduğu gibi anlatıyorum, küçümsemiyorum." },
+    { "id": "q_family", "category": "psychosocial", "text": "Ailenizle aranızda son zamanlarda gerginlik var mı?", "targetSymptom": "family_conflict", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, evde sürekli tartışma çıkıyor, çok yoruyor beni.", "deceptiveResponse": "Hayır, ailemle aramız gayet iyi.", "absentResponse": "Hayır, ailemle bir sorun yaşamıyorum." },
+    { "id": "q_financial", "category": "psychosocial", "text": "Maddi konularda sıkıntı yaşıyor musunuz?", "targetSymptom": "financial_stress", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, faturaları karşılamakta zorlanıyorum, bu da beni çok geriyor.", "deceptiveResponse": "Hayır, maddi durumum gayet iyi.", "absentResponse": "Hayır, maddi bir sıkıntım yok." },
+    { "id": "q_headache", "category": "somatic", "text": "Sık sık baş ağrısı çekiyor musunuz?", "targetSymptom": "headache", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, neredeyse her gün başım ağrıyor.", "deceptiveResponse": "Hayır, baş ağrım yok.", "absentResponse": "Hayır, baş ağrım olmuyor." },
+    { "id": "q_dizziness", "category": "somatic", "text": "Baş dönmesi yaşıyor musunuz?", "targetSymptom": "dizziness", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bazen ayakta duramayacak kadar başım dönüyor.", "deceptiveResponse": "Hayır, baş dönmem yok.", "absentResponse": "Hayır, baş dönmesi yaşamıyorum." },
+    { "id": "q_caffeine", "category": "behavior", "text": "Günlük kafein tüketiminiz nasıl?", "targetSymptom": "caffeine_use", "timeCost": 5, "rapportEffect": 0, "sensitive": false, "truthfulResponse": "Günde belki 6-7 fincan kahve içiyorum, onsuz olmuyor.", "deceptiveResponse": "Normal, bir iki fincan içerim.", "absentResponse": "Pek kahve içmem." },
+    { "id": "q_sleep_hygiene", "category": "behavior", "text": "Uyku düzeniniz ve alışkanlıklarınız nasıl?", "targetSymptom": "sleep_hygiene", "timeCost": 5, "rapportEffect": 0, "sensitive": false, "truthfulResponse": "Açıkçası düzensiz, gece geç saatlere kadar telefon kullanıyorum ve saatim hep değişiyor.", "deceptiveResponse": "Gayet düzenli bir uyku rutinim var.", "absentResponse": "Uyku alışkanlıklarımda bir sorun yok." },
+
+    { "id": "q_obsessive_thoughts", "category": "cognitive", "text": "Zihninizde tekrar tekrar beliren, istemediğiniz halde bir türlü kafanızdan atamadığınız düşünceler oluyor mu?", "targetSymptom": "obsessive_thoughts", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet... aynı düşünce kafamda dönüp duruyor, susturamıyorum bir türlü.", "deceptiveResponse": "Yok, öyle bir şey yaşamıyorum.", "absentResponse": "Hayır, böyle takıntılı düşüncelerim olmuyor." },
+    { "id": "q_compulsive_behavior", "category": "behavior", "text": "Belirli davranışları tekrar tekrar yapma ihtiyacı hissediyor musunuz?", "targetSymptom": "compulsive_behavior", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bir şeyi doğru yapmadığımı hissedince ta ki 'doğru' gelene kadar tekrarlıyorum.", "deceptiveResponse": "Hayır, öyle bir alışkanlığım yok.", "absentResponse": "Hayır, tekrarlayan bir davranışım yok." },
+    { "id": "q_contamination", "category": "cognitive", "text": "Kirlenme veya mikrop bulaşması konusunda kendinizi aşırı endişeli hissediyor musunuz?", "targetSymptom": "contamination_fear", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, ellerimi durmadan yıkıyorum, hâlâ kirli hissediyorum.", "deceptiveResponse": "Hayır, bu konuda normalim.", "absentResponse": "Hayır, böyle bir endişem yok." },
+    { "id": "q_checking", "category": "behavior", "text": "Evden çıkmadan önce kapı, ocak, priz gibi şeyleri defalarca kontrol eder misiniz?", "targetSymptom": "checking_behavior", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bazen on kere geri dönüp kontrol ediyorum, yine de emin olamıyorum.", "deceptiveResponse": "Hayır, bir kere bakarım yeter.", "absentResponse": "Hayır, böyle bir kontrol alışkanlığım yok." },
+    { "id": "q_symmetry", "category": "behavior", "text": "Eşyaların düzenli ya da simetrik olmaması sizi rahatsız ediyor mu?", "targetSymptom": "symmetry_need", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bir şey yamuksa içim rahat etmiyor, düzeltene kadar duramıyorum.", "deceptiveResponse": "Hayır, pek takmam böyle şeylere.", "absentResponse": "Hayır, düzensizlik beni rahatsız etmiyor." },
+    { "id": "q_rituals_time", "category": "behavior", "text": "Bu tür alışkanlıklar günlük hayatınızda ne kadar zamanınızı alıyor?", "targetSymptom": "time_consuming_rituals", "timeCost": 5, "rapportEffect": 1, "sensitive": true, "truthfulResponse": "Bazen günde iki saatimi alıyor, işe geç bile kaldığım oluyor.", "deceptiveResponse": "Fazla zaman almıyor, birkaç dakika sürüyor.", "absentResponse": "Böyle bir zaman kaybım yok." },
+    { "id": "q_insight", "category": "cognitive", "text": "Bu düşünce ya da davranışların gereksiz olduğunu düşünüyor musunuz ama yine de durduramıyor musunuz?", "targetSymptom": "insight_distress", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, aslında anlamsız olduğunu biliyorum ama durduramıyorum, bu da beni çok yıpratıyor.", "deceptiveResponse": "Hayır, yaptıklarım mantıklı geliyor bana.", "absentResponse": "Hayır, böyle bir çelişki yaşamıyorum." },
+
+    { "id": "q_intrusive_memories", "category": "cognitive", "text": "Geçmişte yaşadığınız zorlayıcı bir olayı istemeden tekrar tekrar hatırladığınız oluyor mu?", "targetSymptom": "intrusive_memories", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, sanki o an yeniden yaşanıyormuş gibi aniden aklıma geliyor, çok yıpratıcı.", "deceptiveResponse": "Hayır, öyle bir şey yaşamıyorum.", "absentResponse": "Hayır, böyle anılarım yok." },
+    { "id": "q_nightmares_trauma", "category": "somatic", "text": "O olayla ilgili kâbuslar görüyor musunuz?", "targetSymptom": "nightmares", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, neredeyse her gece aynı kâbusla uyanıyorum.", "deceptiveResponse": "Hayır, rahat uyuyorum.", "absentResponse": "Hayır, kâbus görmüyorum." },
+    { "id": "q_trauma_avoidance", "category": "behavior", "text": "O olayı hatırlatan yer, kişi ya da durumlardan kaçınıyor musunuz?", "targetSymptom": "trauma_avoidance", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, o bölgeye yaklaşamıyorum bile, aklıma gelmesin diye elimden geleni yapıyorum.", "deceptiveResponse": "Hayır, günlük hayatım hiç etkilenmedi.", "absentResponse": "Hayır, kaçındığım bir şey yok." },
+    { "id": "q_negative_cognition", "category": "mood", "text": "Kendinize veya dünyaya bakışınızda olumsuz bir değişim oldu mu? Örneğin 'hiçbir yer güvenli değil' gibi düşünceler?", "targetSymptom": "negative_cognition", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, artık kimseye güvenemiyorum, dünya bana çok tehlikeli görünüyor.", "deceptiveResponse": "Hayır, bakış açım değişmedi.", "absentResponse": "Hayır, böyle bir değişim yaşamadım." },
+    { "id": "q_hypervigilance", "category": "somatic", "text": "Sürekli tetikte, etrafı kontrol eder halde mi hissediyorsunuz?", "targetSymptom": "hypervigilance", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, hep arkamı kolluyorum, rahatlayamıyorum bir türlü.", "deceptiveResponse": "Hayır, gayet rahatım.", "absentResponse": "Hayır, böyle bir tetikte olma halim yok." },
+    { "id": "q_startle", "category": "somatic", "text": "Ani seslere ya da hareketlere karşı aşırı irkiliyor musunuz?", "targetSymptom": "exaggerated_startle", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bir kapı çarpsa yerimden sıçrıyorum, kalbim küt küt atmaya başlıyor.", "deceptiveResponse": "Hayır, normal tepki veriyorum.", "absentResponse": "Hayır, ani seslere aşırı tepki vermiyorum." },
+    { "id": "q_numbness", "category": "mood", "text": "Yakınlarınızdan duygusal olarak koptuğunuzu ya da hissizleştiğinizi hissediyor musunuz?", "targetSymptom": "emotional_numbness", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, eskisi gibi hiçbir şey hissetmiyorum, sanki içim boşalmış gibi.", "deceptiveResponse": "Hayır, duygularım her zamanki gibi.", "absentResponse": "Hayır, böyle bir kopukluk yaşamıyorum." }
+  ],
+
+  "tests": [
+    { "id": "beck_depression", "label": "Beck Depresyon Envanteri (BDI)", "targetDiagnosis": "mdd", "timeCost": 10 },
+    { "id": "ymrs", "label": "Young Mani Derecelendirme Ölçeği (YMRS)", "targetDiagnosis": "bipolar1", "timeCost": 10 },
+    { "id": "gad7", "label": "GAD-7 Anksiyete Ölçeği", "targetDiagnosis": "gad", "timeCost": 10 },
+    { "id": "pdss", "label": "Panik Bozukluk Şiddet Ölçeği (PDSS)", "targetDiagnosis": "panic", "timeCost": 10 },
+    { "id": "ybocs", "label": "Yale-Brown Obsesif Kompulsif Ölçeği (Y-BOCS)", "targetDiagnosis": "ocd", "timeCost": 10 },
+    { "id": "pcl5", "label": "TSSB Kontrol Listesi (PCL-5)", "targetDiagnosis": "ptsd", "timeCost": 10 }
+  ]
+}
