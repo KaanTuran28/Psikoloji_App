@@ -8,12 +8,48 @@ let gameData = null;
 
 const els = {};
 
+// Turkish labels for question categories (data/patients.json -> questions[].category)
+const QUESTION_CATEGORIES = {
+  mood: { label: "Duygudurum", icon: "🧠" },
+  somatic: { label: "Bedensel Belirtiler", icon: "🫀" },
+  cognitive: { label: "Bilişsel", icon: "💭" },
+  behavior: { label: "Davranış", icon: "🎭" },
+  risk: { label: "Risk Değerlendirmesi", icon: "⚠️" },
+  psychosocial: { label: "Psikososyal", icon: "🏠" }
+};
+
+// Question groups the player collapsed — preserved across re-renders.
+const collapsedCategories = new Set();
+
+const DIFFICULTY_STORAGE_KEY = "psikotarama_difficulty";
+let selectedDifficulty = loadDifficulty();
+
+// Incremental dialogue rendering: how many engine.dialogueLog entries are
+// already in the DOM (avoids rebuilding the whole log on every action).
+let renderedDialogueCount = 0;
+
+// Time-up warning sound should fire once per case.
+let timeUpSoundPlayed = false;
+
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
   bindStaticEvents();
+  renderDifficultyControls();
+  syncMuteButton();
   loadData();
   renderHistory();
+  registerServiceWorker();
 });
+
+function registerServiceWorker() {
+  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch((err) => {
+        console.warn("Service worker kaydı başarısız:", err);
+      });
+    });
+  }
+}
 
 function cacheElements() {
   els.btnNewCase = document.getElementById("btn-new-case");
@@ -21,6 +57,11 @@ function cacheElements() {
   els.startLoading = document.getElementById("start-loading");
   els.startWelcome = document.getElementById("start-welcome");
   els.btnStartFirstCase = document.getElementById("btn-start-first-case");
+
+  els.difficultySelect = document.getElementById("difficulty-select");
+  els.difficultyCards = document.getElementById("difficulty-cards");
+  els.mobileTabs = document.getElementById("mobile-tabs");
+  els.btnMute = document.getElementById("btn-mute");
 
   els.patientAvatar = document.getElementById("patient-avatar");
   els.patientName = document.getElementById("patient-name");
@@ -58,6 +99,57 @@ function bindStaticEvents() {
   });
   els.btnSubmitDiagnosis.addEventListener("click", handleSubmitDiagnosis);
   els.btnClearHistory.addEventListener("click", clearHistory);
+
+  els.difficultySelect.addEventListener("change", () => {
+    setDifficulty(els.difficultySelect.value);
+  });
+
+  els.mobileTabs.addEventListener("click", (e) => {
+    const tab = e.target.closest(".mobile-tab");
+    if (tab) setActivePanel(tab.dataset.panel);
+  });
+
+  els.btnMute.addEventListener("click", () => {
+    SoundFX.toggleMuted();
+    syncMuteButton();
+  });
+
+  document.addEventListener("keydown", handleShortcut);
+}
+
+// ---------------------------------------------------------------------
+// Keyboard shortcuts & sound toggle
+// ---------------------------------------------------------------------
+
+function handleShortcut(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const target = e.target;
+  if (target && (target.tagName === "INPUT" || target.tagName === "SELECT" || target.tagName === "TEXTAREA")) return;
+
+  switch (e.key.toLowerCase()) {
+    case "h":
+      setActivePanel("sidebar");
+      break;
+    case "g":
+      setActivePanel("interview");
+      break;
+    case "t":
+      setActivePanel("notepad");
+      break;
+    case "y":
+      if (!els.btnNewCase.disabled) startNewCase();
+      break;
+    case "m":
+      SoundFX.toggleMuted();
+      syncMuteButton();
+      break;
+  }
+}
+
+function syncMuteButton() {
+  const muted = SoundFX.isMuted();
+  els.btnMute.textContent = muted ? "🔇" : "🔊";
+  els.btnMute.setAttribute("aria-pressed", String(muted));
 }
 
 async function loadData() {
@@ -68,6 +160,7 @@ async function loadData() {
     els.btnNewCase.disabled = false;
     hide(els.startLoading);
     show(els.startWelcome);
+    els.btnStartFirstCase.focus();
   } catch (err) {
     els.startOverlay.querySelector("p").textContent =
       "Veri dosyası yüklenemedi. Lütfen sayfayı bir yerel sunucu üzerinden açtığınızdan emin olun.";
@@ -76,28 +169,128 @@ async function loadData() {
 }
 
 // ---------------------------------------------------------------------
+// Difficulty selection
+// ---------------------------------------------------------------------
+
+function loadDifficulty() {
+  const stored = localStorage.getItem(DIFFICULTY_STORAGE_KEY);
+  return DIFFICULTIES[stored] ? stored : "normal";
+}
+
+function setDifficulty(id) {
+  if (!DIFFICULTIES[id]) return;
+  selectedDifficulty = id;
+  try {
+    localStorage.setItem(DIFFICULTY_STORAGE_KEY, id);
+  } catch (err) {
+    /* storage unavailable — selection still works for this session */
+  }
+  syncDifficultyUI();
+}
+
+function renderDifficultyControls() {
+  // Topbar <select>
+  els.difficultySelect.innerHTML = "";
+  Object.values(DIFFICULTIES).forEach((d) => {
+    const opt = document.createElement("option");
+    opt.value = d.id;
+    opt.textContent = `${d.icon} ${d.label}`;
+    els.difficultySelect.appendChild(opt);
+  });
+
+  // Welcome overlay cards
+  els.difficultyCards.innerHTML = "";
+  Object.values(DIFFICULTIES).forEach((d) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "difficulty-card";
+    card.dataset.difficulty = d.id;
+
+    const stats = [
+      `⏱ ${d.startTime} dk`,
+      `🤝 ${d.startRapport} güven`,
+      d.testTimeMultiplier > 1 ? `🧪 +%${Math.round((d.testTimeMultiplier - 1) * 100)} test süresi` : null,
+      d.distractorCount > 1 ? `🌀 ${d.distractorCount} dikkat dağıtıcı` : null,
+      d.vagueTestResults ? "📉 kaba test sonucu" : null
+    ].filter(Boolean).join(" · ");
+
+    card.innerHTML = `
+      <span class="difficulty-card-icon">${d.icon}</span>
+      <span class="difficulty-card-name">${d.label}</span>
+      <span class="difficulty-card-desc">${d.description}</span>
+      <span class="difficulty-card-stats">${stats}</span>
+    `;
+    card.addEventListener("click", () => setDifficulty(d.id));
+    els.difficultyCards.appendChild(card);
+  });
+
+  syncDifficultyUI();
+}
+
+function syncDifficultyUI() {
+  els.difficultySelect.value = selectedDifficulty;
+  els.difficultyCards.querySelectorAll(".difficulty-card").forEach((card) => {
+    card.classList.toggle(
+      "difficulty-card--selected",
+      card.dataset.difficulty === selectedDifficulty
+    );
+  });
+}
+
+// ---------------------------------------------------------------------
+// Mobile tab navigation (narrow screens show one panel at a time)
+// ---------------------------------------------------------------------
+
+function setActivePanel(name) {
+  els.mobileTabs.querySelectorAll(".mobile-tab").forEach((tab) => {
+    const active = tab.dataset.panel === name;
+    tab.classList.toggle("mobile-tab--active", active);
+    if (active) tab.setAttribute("aria-current", "true");
+    else tab.removeAttribute("aria-current");
+  });
+  document.querySelectorAll(".layout > .panel").forEach((panel) => {
+    panel.classList.toggle("panel--active", panel.classList.contains(name));
+  });
+}
+
+// ---------------------------------------------------------------------
 // Case lifecycle
 // ---------------------------------------------------------------------
 
 function startNewCase() {
-  engine.generateCase();
+  if (
+    engine.patient &&
+    !engine.diagnosisSubmitted &&
+    (engine.dialogueLog.length > 0 || engine.notepad.size > 0)
+  ) {
+    if (!confirm("Mevcut vaka henüz tamamlanmadı. Yine de yeni bir vaka başlatılsın mı?")) return;
+  }
+
+  engine.generateCase(selectedDifficulty);
+  collapsedCategories.clear();
+  renderedDialogueCount = 0;
+  timeUpSoundPlayed = false;
   hide(els.startOverlay);
   hide(els.resultOverlay);
 
   renderPatientInfo();
   renderVitals();
   renderTests();
+  renderTestResults();
   renderDialogueLog();
   renderQuestions();
   renderCriteria();
   renderDiagnosisOptions();
+  setActivePanel("interview");
 }
 
 function renderPatientInfo() {
   const p = engine.patient;
+  const d = engine.difficulty;
   els.patientAvatar.textContent = getInitials(p.name);
   els.patientName.textContent = p.name;
-  els.patientMeta.textContent = `${p.age} yaşında · ${p.occupation} · Vaka #${Math.floor(Math.random() * 9000) + 1000}`;
+  els.patientMeta.textContent =
+    `${p.age} yaşında · ${p.occupation} · ${d.icon} ${d.label}`;
   els.caseBrief.textContent = p.caseBrief;
 }
 
@@ -116,11 +309,17 @@ function renderVitals() {
   els.rapportFill.style.width = `${pct}%`;
   els.rapportValue.textContent = `${pct}/100`;
 
-  if (engine.gameOver && !engine.diagnosisSubmitted) {
-    els.timeValue.classList.add("vital-critical");
-  } else {
-    els.timeValue.classList.remove("vital-critical");
-  }
+  // Rapport bar color: red when the patient may lie, amber when shaky.
+  const lieThreshold = engine.difficulty.lieThreshold;
+  els.rapportFill.classList.toggle("rapport-fill--low", pct < lieThreshold);
+  els.rapportFill.classList.toggle("rapport-fill--mid", pct >= lieThreshold && pct < 70);
+
+  const timedOut = engine.gameOver && !engine.diagnosisSubmitted;
+  els.timeValue.classList.toggle("vital-critical", timedOut);
+  els.timeValue.classList.toggle(
+    "vital-warning",
+    !timedOut && !engine.diagnosisSubmitted && engine.timeRemaining <= 10
+  );
 
   renderTimeUpBanner();
 }
@@ -128,6 +327,10 @@ function renderVitals() {
 function renderTimeUpBanner() {
   if (engine.gameOver && !engine.diagnosisSubmitted) {
     show(els.timeUpBanner);
+    if (!timeUpSoundPlayed) {
+      timeUpSoundPlayed = true;
+      SoundFX.warning();
+    }
   } else {
     hide(els.timeUpBanner);
   }
@@ -142,10 +345,22 @@ function renderTests() {
   gameData.tests.forEach((test) => {
     const btn = document.createElement("button");
     btn.className = "btn btn-test";
-    btn.textContent = `${test.label} (-${test.timeCost} dk)`;
+
+    const label = document.createElement("span");
+    label.className = "btn-question-text";
+    label.textContent = test.label;
+
+    const cost = document.createElement("span");
+    cost.className = "btn-cost";
+    cost.textContent = `−${engine.getTestTimeCost(test)} dk`;
+
+    btn.appendChild(label);
+    btn.appendChild(cost);
+
     btn.disabled = engine.completedTestIds.has(test.id) || engine.gameOver;
     btn.addEventListener("click", () => {
       engine.runTest(test.id);
+      SoundFX.test();
       renderVitals();
       renderTests();
       renderTestResults();
@@ -169,7 +384,8 @@ function renderTestResults() {
   entries.forEach((r) => {
     const row = document.createElement("div");
     row.className = `test-result test-result--${r.verdict === "Yüksek" ? "high" : r.verdict === "Orta" ? "mid" : "low"}`;
-    row.innerHTML = `<span class="test-result-label">${r.label}</span><span class="test-result-score">%${r.score} · ${r.verdict}</span>`;
+    const scoreText = r.vague ? r.verdict : `%${r.score} · ${r.verdict}`;
+    row.innerHTML = `<span class="test-result-label">${r.label}</span><span class="test-result-score">${scoreText}</span>`;
     els.testResults.appendChild(row);
   });
 }
@@ -180,39 +396,100 @@ function renderTestResults() {
 
 function renderQuestions() {
   els.questionButtons.innerHTML = "";
+
+  // Group questions by category, preserving data order.
+  const groups = new Map();
   gameData.questions.forEach((q) => {
-    const btn = document.createElement("button");
-    btn.className = "btn btn-question";
-    btn.textContent = q.text;
-    btn.disabled = engine.askedQuestionIds.has(q.id) || engine.gameOver;
-    btn.addEventListener("click", () => {
-      engine.askQuestion(q.id);
-      renderVitals();
-      renderDialogueLog();
-      renderQuestions();
-      renderTests();
+    const cat = q.category || "other";
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat).push(q);
+  });
+
+  groups.forEach((questions, cat) => {
+    const meta = QUESTION_CATEGORIES[cat] || { label: cat, icon: "🗂" };
+    const askedCount = questions.filter((q) => engine.askedQuestionIds.has(q.id)).length;
+
+    const group = document.createElement("details");
+    group.className = "question-group";
+    group.open = !collapsedCategories.has(cat);
+    group.addEventListener("toggle", () => {
+      if (group.open) collapsedCategories.delete(cat);
+      else collapsedCategories.add(cat);
     });
-    els.questionButtons.appendChild(btn);
+
+    const summary = document.createElement("summary");
+    summary.innerHTML =
+      `<span class="question-group-title">${meta.icon} ${meta.label}</span>` +
+      `<span class="question-group-count">${askedCount}/${questions.length}</span>`;
+    group.appendChild(summary);
+
+    const grid = document.createElement("div");
+    grid.className = "question-grid";
+
+    questions.forEach((q) => {
+      const btn = document.createElement("button");
+      btn.className = "btn btn-question";
+
+      const text = document.createElement("span");
+      text.className = "btn-question-text";
+      text.textContent = q.text;
+
+      const cost = document.createElement("span");
+      cost.className = "btn-cost";
+      cost.textContent = `−${q.timeCost || 5} dk`;
+
+      btn.appendChild(text);
+      btn.appendChild(cost);
+
+      btn.disabled = engine.askedQuestionIds.has(q.id) || engine.gameOver;
+      btn.addEventListener("click", () => {
+        engine.askQuestion(q.id);
+        SoundFX.click();
+        renderVitals();
+        renderDialogueLog();
+        renderQuestions();
+        renderTests();
+      });
+      grid.appendChild(btn);
+    });
+
+    group.appendChild(grid);
+    els.questionButtons.appendChild(group);
   });
 }
 
+/**
+ * Renders the dialogue log incrementally: only entries added since the last
+ * call are appended to the DOM (a full rebuild on every click made the log
+ * flicker and re-layout as cases grow long).
+ */
 function renderDialogueLog() {
-  els.dialogueLog.innerHTML = "";
+  const log = engine.dialogueLog;
 
-  if (engine.dialogueLog.length === 0) {
-    const intro = document.createElement("div");
-    intro.className = "dialogue-entry dialogue-entry--system";
-    intro.textContent = `${engine.patient.name} (${engine.patient.occupation}) görüşme odasına alındı. Görüşmeye başlamak için bir soru seçin.`;
-    els.dialogueLog.appendChild(intro);
+  if (renderedDialogueCount === 0) {
+    els.dialogueLog.innerHTML = "";
+    if (log.length === 0) {
+      const intro = document.createElement("div");
+      intro.className = "dialogue-entry dialogue-entry--system dialogue-entry--intro";
+      intro.textContent = `${engine.patient.name} (${engine.patient.occupation}) görüşme odasına alındı. Görüşmeye başlamak için bir soru seçin.`;
+      els.dialogueLog.appendChild(intro);
+      return;
+    }
   }
 
-  engine.dialogueLog.forEach((entry) => {
+  if (log.length > 0) {
+    const intro = els.dialogueLog.querySelector(".dialogue-entry--intro");
+    if (intro) intro.remove();
+  }
+
+  for (let i = renderedDialogueCount; i < log.length; i++) {
+    const entry = log[i];
     if (entry.speaker === "system") {
       const sysEl = document.createElement("div");
       sysEl.className = "dialogue-entry dialogue-entry--system";
       sysEl.textContent = entry.text;
       els.dialogueLog.appendChild(sysEl);
-      return;
+      continue;
     }
 
     const qEl = document.createElement("div");
@@ -224,7 +501,8 @@ function renderDialogueLog() {
     aEl.className = "dialogue-entry dialogue-entry--answer";
     aEl.textContent = entry.text;
     els.dialogueLog.appendChild(aEl);
-  });
+  }
+  renderedDialogueCount = log.length;
 
   els.dialogueLog.scrollTop = els.dialogueLog.scrollHeight;
 }
@@ -275,6 +553,7 @@ function renderCriteria() {
 
 function renderDiagnosisOptions() {
   els.diagnosisOptions.innerHTML = "";
+  els.btnSubmitDiagnosis.disabled = true;
   gameData.rootDiagnosis.forEach((d) => {
     const label = document.createElement("label");
     label.className = "diagnosis-option";
@@ -283,6 +562,9 @@ function renderDiagnosisOptions() {
     radio.type = "radio";
     radio.name = "diagnosis-choice";
     radio.value = d.id;
+    radio.addEventListener("change", () => {
+      els.btnSubmitDiagnosis.disabled = false;
+    });
 
     const span = document.createElement("span");
     span.textContent = `${d.label} (${d.code})`;
@@ -300,6 +582,8 @@ function handleSubmitDiagnosis() {
     return;
   }
   const result = engine.submitDiagnosis(selected.value);
+  if (result.diagnosisCorrect) SoundFX.success();
+  else SoundFX.failure();
   renderVitals();
   renderResult(result);
   saveHistoryEntry(result);
@@ -353,7 +637,8 @@ function saveHistoryEntry(result) {
     diagnosisCorrect: result.diagnosisCorrect,
     score: result.score,
     correctDiagnosisLabel: result.correctDiagnosisLabel,
-    chosenDiagnosisLabel: result.chosenDiagnosisLabel
+    chosenDiagnosisLabel: result.chosenDiagnosisLabel,
+    difficultyLabel: result.difficultyLabel
   });
   history.length = Math.min(history.length, HISTORY_MAX_ENTRIES);
   persistHistory(history);
@@ -398,7 +683,8 @@ function renderHistory() {
 
     const date = document.createElement("span");
     date.className = "history-entry-date";
-    date.textContent = formatHistoryDate(entry.date);
+    date.textContent = formatHistoryDate(entry.date) +
+      (entry.difficultyLabel ? ` · ${entry.difficultyLabel}` : "");
 
     info.appendChild(diagnosis);
     info.appendChild(date);
@@ -438,6 +724,7 @@ function renderResult(result) {
       ${result.diagnosisCorrect ? "✅ Doğru Tanı" : "❌ Yanlış Tanı"}
     </p>
     <ul class="result-list">
+      <li><strong>Zorluk:</strong> ${result.difficultyLabel}</li>
       <li><strong>Seçilen Tanı:</strong> ${result.chosenDiagnosisLabel}</li>
       <li><strong>Gerçek Tanı:</strong> ${result.correctDiagnosisLabel}</li>
       <li><strong>Dikkat Dağıtıcı Unsur:</strong> ${result.distractorLabel}</li>
@@ -453,6 +740,7 @@ function renderResult(result) {
     ${renderFeedback(result.feedback)}
   `;
   show(els.resultOverlay);
+  els.btnRestart.focus();
 }
 
 function renderFeedback(feedback) {

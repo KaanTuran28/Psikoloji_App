@@ -13,9 +13,13 @@ Veritabanı, Node.js, React veya başka bir framework KULLANILMAYACAK.
 
 ```
 /index.html
+/manifest.webmanifest   -> PWA manifest
+/sw.js                  -> service worker (cache-first, offline destek)
+/icons/                 -> PWA ikonları (192/512, canvas ile üretildi)
 /css/style.css
-/js/GameEngine.js     -> ClinicalEngine sınıfı
-/js/app.js             -> DOM bağlama / render mantığı
+/js/GameEngine.js       -> ClinicalEngine sınıfı + DIFFICULTIES
+/js/sound.js            -> SoundFX (WebAudio ses efektleri)
+/js/app.js              -> DOM bağlama / render mantığı
 /data/patients.json     -> RootDiagnosis / Distractors / Questions / Tests
 /PROGRESS.md            -> bu dosya
 ```
@@ -239,16 +243,124 @@ Playwright ile: karşılama ekranı akışı (yükleniyor → hoş geldiniz →
 dialog kabul edilerek), yeni ikonlu başlıklar ve sonuç banner'ı ikonu
 uçtan uca test edildi; konsolda hata yok.
 
+## Durum: AŞAMA 6 TAMAMLANDI ✅ (2026-07-09)
+
+Kullanıcı isteği: daha iyi responsive tasarım, genel sadeleştirme (kafa
+karışıklığını azaltma) ve zorluk modları.
+
+### Tamamlananlar
+
+1. **Zorluk sistemi (`GameEngine.js` → `DIFFICULTIES`).** 3 seviye:
+   - **🌱 Kolay:** 60 dk, 60 rapport, yalan eşiği 30 / çarpan 1.0, test x1
+   - **⚖️ Normal:** 45 dk, 50 rapport, yalan eşiği 40 / çarpan 1.5, test x1
+     (önceki davranışla birebir aynı)
+   - **🔥 Zor:** 30 dk, 40 rapport, yalan eşiği 50 / çarpan 2.0, test x1.5
+   - `generateCase(difficultyId)` parametre alıyor; `_resolveResponse` ve
+     `runTest` (yeni `getTestTimeCost()`) zorluk konfigürasyonunu kullanıyor.
+   - Seçim `localStorage`'a kaydediliyor (`psikotarama_difficulty`);
+     karşılama ekranında 3 seçim kartı + topbar'da select (bir sonraki
+     vakada geçerli). Zorluk; hasta meta satırında, sonuç ekranında ve
+     vaka geçmişi kayıtlarında gösteriliyor.
+2. **Soru paneli sadeleştirildi.** 51 soruluk düz grid yerine kategori
+   bazlı, açılır-kapanır `<details>` grupları (🧠 Duygudurum, 🫀 Bedensel,
+   💭 Bilişsel, 🎭 Davranış, ⚠️ Risk, 🏠 Psikososyal) + her grupta
+   "soruldu/toplam" sayacı. Kapalı/açık durumu vaka boyunca korunuyor
+   (`collapsedCategories` seti). Her soru ve test butonunda artık zaman
+   maliyeti rozeti var (−5 dk vb.; test maliyeti zorluğa göre dinamik).
+3. **Gerçek mobil deneyim: sekmeli panel navigasyonu.** ≤900px'de 3 panel
+   alt alta yığılmak yerine tek seferde bir panel gösteriliyor; topbar
+   altında 🩺 Hasta / 💬 Görüşme / 📝 Tanı sekme çubuğu (`#mobile-tabs`,
+   `setActivePanel()`). Yeni vaka başlayınca otomatik Görüşme sekmesine
+   dönüyor. Yeni breakpoint seti: 1200 / 900 / 600 / 480px; mobilde yatay
+   taşma yok (Playwright ile doğrulandı).
+4. **UX cilaları:**
+   - Güven barı renk kodlu: yalan eşiğinin altında kırmızı, <70 amber,
+     üstü teal. Kalan süre ≤10 dk olunca amber uyarı rengi.
+   - "Tanıyı Onayla" butonu bir tanı seçilene kadar devre dışı.
+   - Devam eden vaka varken "Yeni Vaka Başlat" `confirm()` ile soruyor.
+   - Bug fix: yeni vakada eski test sonuçları panelde kalıyordu
+     (`startNewCase` artık `renderTestResults()` çağırıyor).
+
+### Doğrulama
+
+Playwright ile 25 senaryoluk uçtan uca test (zorluk kartları/selecti,
+Zor modda 30 dk + 40 rapport + 15 dk test maliyeti, soru grupları ve
+sayaçları, submit koruması, sonuç/geçmişte zorluk etiketi, mobil sekme
+geçişleri, yatay taşma kontrolü, Kolay modda 60 dk/60 rapport) — tümü
+PASS, konsol hatasız. Masaüstü + mobil ekran görüntüleriyle görsel teyit.
+
+## Durum: AŞAMA 7 TAMAMLANDI ✅ (2026-07-09)
+
+Kullanıcı isteği: AŞAMA 6 sonundaki öneri listesinden 2 (Zor moda derinlik),
+4 (içerik genişletme), 5 (erişilebilirlik/his) ve 6 (PWA) uygulandı; ardından
+test + optimizasyon + push.
+
+### Tamamlananlar
+
+1. **Zor moda derinlik (`DIFFICULTIES` yeni alanlar).**
+   - `distractorCount: 2` — Zor'da hasta 2 farklı distractor'ün semptomlarını
+     taşıyor (`pickRandomDistinct()`); vaka notu yalnızca birincil
+     distractor'ün sevk nedenini gösteriyor, ikincisi saf gürültü.
+     `patient.distractorLabel` artık "X + Y" biçiminde birleşik.
+   - `vagueTestResults: true` — Zor'da test sonuçları yüzdesiz, yalnızca
+     Düşük/Orta/Yüksek (`runTest` → `result.vague`; UI ve diyalog metni
+     buna göre). Kolay/Normal'de yüzde aynen gösteriliyor.
+   - Zorluk kartı istatistiklerinde "🌀 2 dikkat dağıtıcı · 📉 kaba test
+     sonucu" rozetleri.
+2. **İçerik genişletme (`data/patients.json`).**
+   - 2 yeni tanı: **Sosyal Anksiyete Bozukluğu (SAD)** — 6 semptom + LSAS
+     testi; **Anoreksiya Nervoza (AN)** — 7 semptom + EAT-26 testi.
+     Toplam: 8 tanı, 8 test.
+   - 13 yeni diyalog sorusu (her yeni semptom için 1); toplam soru 51 → 64.
+     Tüm semptomların sorusu olduğu script ile doğrulandı.
+   - `caseBriefTemplates`: 4 cümle şablonu ({name}/{age}/{occupation}/
+     {referral} yer tutucuları); `generateCase()` rastgele birini seçiyor —
+     AŞAMA 6 backlog'undaki "tek şablon" sınırı da kapandı.
+3. **Erişilebilirlik + his.**
+   - **Klavye kısayolları:** H (Hasta) / G (Görüşme) / T (Tanı) / Y (Yeni
+     Vaka) / M (Ses). Karşılama ekranında `<kbd>` ipucu satırı. Girdi
+     alanlarında ve modifier'lı basışlarda devre dışı.
+   - **Ses efektleri (`js/sound.js` — SoundFX):** WebAudio ile sentezlenen
+     kısa tonlar (soru tıkı, test ding'i, doğru/yanlış tanı arpejleri, süre
+     doldu bip'i) — ses dosyası yok. Topbar'da 🔊/🔇 düğmesi
+     (`aria-pressed`), tercih `psikotarama_muted` ile kalıcı.
+   - **ARIA/odak:** diyalog `role="log" aria-live="polite"`, test sonuçları
+     `aria-live`, overlay'ler `role="dialog" aria-modal`, mobil sekmede
+     `aria-current`, karşılamada başlat / sonuçta yeniden başlat düğmesine
+     otomatik odak.
+4. **PWA.** `manifest.webmanifest` (standalone, tr, tema #0b1220),
+   `sw.js` (cache-first app shell — çevrimdışı çalışıyor; sürüm:
+   `psikotarama-v1`, **her sürümde bump edilmeli**), 192/512 px "Ψ" ikonları
+   (headless Chrome canvas ile üretildi), `theme-color`/`description`
+   meta'ları, favicon/apple-touch-icon.
+5. **Optimizasyon.** Diyalog log'u artık artımlı render ediliyor — her
+   tıklamada tüm log DOM'u yeniden kurulmuyor, yalnızca yeni girişler
+   ekleniyor (`renderedDialogueCount`); service worker ilk ziyaretten sonra
+   tüm varlıkları önbellekten sunuyor.
+
+### Doğrulama
+
+- Yeni 37 senaryoluk Playwright paketi: PWA varlıkları/manifest/SW kaydı,
+  odak yönetimi, ARIA öznitelikleri, Zor'da 2 distractor + "X + Y" etiketi +
+  yüzdesiz test sonucu, Normal'de yüzdeli sonuç, 8 tanı/8 test/yeni
+  etiketler, artımlı diyalog sayıları, sessize alma + M kısayolu +
+  localStorage kalıcılığı, H/G/T/Y kısayolları, mobil taşma kontrolü —
+  **tümü PASS, konsol hatasız.**
+- AŞAMA 6'nın 25 senaryoluk regresyon paketi de yeniden koşuldu — tümü PASS.
+
 ## Bilinen Sınırlamalar / Sonraki Adaylar (henüz yapılmadı)
 
 Bunlar kullanıcı tarafından istenmedi ama doğal sonraki adımlar olabilir:
 
+- [ ] İstatistik/ilerleme ekranı: geçmişteki vakalardan doğruluk oranı,
+      ortalama puan, tanı bazında başarı grafiği (localStorage verisi hazır).
+- [ ] Rozet/başarım sistemi (ör. "5 vaka üst üste doğru tanı").
 - [ ] Sürükle-bırak (drag & drop) ile not defteri etkileşimi — şu an
-      checkbox tabanlı (spec'te "Drag & Drop OR Selectable" deniyordu,
-      selectable seçildi).
-- [ ] Zorluk seviyesi (ör. daha az zaman, daha fazla distractor) eklenebilir.
-- [ ] Vaka notları şu an tek şablon (`isim, yaş, meslek. sevk nedeni`) —
-      birden fazla cümle varyasyonu/şablonu ile daha da zenginleştirilebilir.
+      checkbox tabanlı.
+- [ ] Komorbid (çift tanılı) vakalar — puanlama ve tanı seçimi UI'sında
+      köklü değişiklik gerektirdiği için AŞAMA 7 kapsamına alınmadı.
+- [ ] Yaşa/mesleğe göre uyarlanmış hasta yanıt metinleri.
+- [ ] SW güncelleme bildirimi ("yeni sürüm var, yenile" toast'ı).
 
 ## Nasıl Çalıştırılır
 

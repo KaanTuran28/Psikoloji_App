@@ -100,7 +100,43 @@
         { "id": "exaggerated_startle", "text": "Ani seslere/hareketlere abartılı irkilme tepkisi" },
         { "id": "emotional_numbness", "text": "Duygusal olarak hissizleşme, yakınlarından kopma hissi" }
       ]
+    },
+    {
+      "id": "sad",
+      "label": "Sosyal Anksiyete Bozukluğu",
+      "code": "SAD",
+      "nextSteps": "Bilişsel davranışçı terapi (özellikle kademeli maruz bırakma ve bilişsel yeniden yapılandırma) ilk basamak tedavidir; gerekirse SSRI ile desteklenebilir.",
+      "symptomPool": [
+        { "id": "fear_social_situations", "text": "Başkalarınca incelenebileceği sosyal ortamlarda belirgin korku veya kaygı" },
+        { "id": "fear_negative_evaluation", "text": "Olumsuz değerlendirilme, utanma veya küçük düşme korkusu" },
+        { "id": "social_avoidance", "text": "Sosyal ortamlardan kaçınma ya da yoğun sıkıntıyla katlanma" },
+        { "id": "physical_social_symptoms", "text": "Sosyal ortamlarda kızarma, terleme, titreme veya ses titremesi" },
+        { "id": "anticipatory_anxiety", "text": "Sosyal etkinlik öncesinde günlerce süren beklenti kaygısı" },
+        { "id": "performance_fear", "text": "Topluluk önünde konuşma/performans durumlarında yoğun korku" }
+      ]
+    },
+    {
+      "id": "an",
+      "label": "Anoreksiya Nervoza",
+      "code": "AN",
+      "nextSteps": "Tıbbi durum değerlendirmesi (elektrolitler, kardiyak takip) önceliklidir; yapılandırılmış yeniden beslenme programı ve aile temelli terapi / BDT-E planlanmalıdır.",
+      "symptomPool": [
+        { "id": "food_restriction", "text": "Belirgin düşük vücut ağırlığına yol açan kısıtlı enerji alımı" },
+        { "id": "weight_gain_fear", "text": "Düşük kiloya rağmen kilo almaktan yoğun korku" },
+        { "id": "body_image_distortion", "text": "Beden ağırlığını/şeklini algılamada bozulma; kendini olduğundan kilolu görme" },
+        { "id": "excessive_exercise", "text": "Kilo kontrolü amacıyla aşırı egzersiz yapma" },
+        { "id": "food_rituals", "text": "Yemekle ilgili katı ritüeller (kalori sayma, yiyecekleri küçük parçalara ayırma)" },
+        { "id": "malnutrition_signs", "text": "Yetersiz beslenmeye bağlı halsizlik, baş dönmesi, sürekli üşüme" },
+        { "id": "seriousness_denial", "text": "Mevcut düşük kilonun ciddiyetini inkâr etme" }
+      ]
     }
+  ],
+
+  "caseBriefTemplates": [
+    "{name}, {age} yaşında bir {occupation}. {referral}",
+    "{age} yaşındaki {occupation} {name}, bugünkü randevunuza geldi. {referral}",
+    "Yeni danışanınız {name} ({age}, {occupation}). {referral}",
+    "Dosya önünüzde: {name}, {age} yaşında, {occupation} olarak çalışıyor. {referral}"
   ],
 
   "distractors": [
@@ -213,7 +249,22 @@
     { "id": "q_negative_cognition", "category": "mood", "text": "Kendinize veya dünyaya bakışınızda olumsuz bir değişim oldu mu? Örneğin 'hiçbir yer güvenli değil' gibi düşünceler?", "targetSymptom": "negative_cognition", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, artık kimseye güvenemiyorum, dünya bana çok tehlikeli görünüyor.", "deceptiveResponse": "Hayır, bakış açım değişmedi.", "absentResponse": "Hayır, böyle bir değişim yaşamadım." },
     { "id": "q_hypervigilance", "category": "somatic", "text": "Sürekli tetikte, etrafı kontrol eder halde mi hissediyorsunuz?", "targetSymptom": "hypervigilance", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, hep arkamı kolluyorum, rahatlayamıyorum bir türlü.", "deceptiveResponse": "Hayır, gayet rahatım.", "absentResponse": "Hayır, böyle bir tetikte olma halim yok." },
     { "id": "q_startle", "category": "somatic", "text": "Ani seslere ya da hareketlere karşı aşırı irkiliyor musunuz?", "targetSymptom": "exaggerated_startle", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bir kapı çarpsa yerimden sıçrıyorum, kalbim küt küt atmaya başlıyor.", "deceptiveResponse": "Hayır, normal tepki veriyorum.", "absentResponse": "Hayır, ani seslere aşırı tepki vermiyorum." },
-    { "id": "q_numbness", "category": "mood", "text": "Yakınlarınızdan duygusal olarak koptuğunuzu ya da hissizleştiğinizi hissediyor musunuz?", "targetSymptom": "emotional_numbness", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, eskisi gibi hiçbir şey hissetmiyorum, sanki içim boşalmış gibi.", "deceptiveResponse": "Hayır, duygularım her zamanki gibi.", "absentResponse": "Hayır, böyle bir kopukluk yaşamıyorum." }
+    { "id": "q_numbness", "category": "mood", "text": "Yakınlarınızdan duygusal olarak koptuğunuzu ya da hissizleştiğinizi hissediyor musunuz?", "targetSymptom": "emotional_numbness", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet, eskisi gibi hiçbir şey hissetmiyorum, sanki içim boşalmış gibi.", "deceptiveResponse": "Hayır, duygularım her zamanki gibi.", "absentResponse": "Hayır, böyle bir kopukluk yaşamıyorum." },
+
+    { "id": "q_social_fear", "category": "mood", "text": "Kalabalık ya da tanımadığınız insanların olduğu ortamlarda kendinizi nasıl hissediyorsunuz?", "targetSymptom": "fear_social_situations", "timeCost": 5, "rapportEffect": 2, "sensitive": false, "truthfulResponse": "Çok geriliyorum... herkes bana bakıyormuş gibi geliyor, bir an önce çıkmak istiyorum.", "deceptiveResponse": "Normal işte, herkes gibi.", "absentResponse": "Gayet rahatım, yeni insanlarla tanışmayı severim." },
+    { "id": "q_negative_eval", "category": "cognitive", "text": "Başkalarının sizi olumsuz yargılamasından ya da küçük düşmekten korktuğunuz oluyor mu?", "targetSymptom": "fear_negative_evaluation", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet... hep aptalca bir şey söyleyeceğim, rezil olacağım diye korkuyorum.", "deceptiveResponse": "Yok, insanların ne düşündüğünü pek takmam.", "absentResponse": "Hayır, böyle bir korkum yok." },
+    { "id": "q_social_avoidance", "category": "behavior", "text": "Sosyal etkinliklerden, davetlerden kaçındığınız oluyor mu?", "targetSymptom": "social_avoidance", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, çoğu davete bahane uydurup gitmiyorum; gitmek zorunda kalırsam da içim içimi yiyor.", "deceptiveResponse": "Hayır, sadece bazen yorgun oluyorum o kadar.", "absentResponse": "Hayır, sosyal etkinliklere severek katılırım." },
+    { "id": "q_social_physical", "category": "somatic", "text": "İnsan içindeyken kızarma, terleme ya da ellerinizde titreme oluyor mu?", "targetSymptom": "physical_social_symptoms", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, yüzüm kıpkırmızı oluyor, ellerim titriyor; herkes fark ediyor diye daha da kötü oluyorum.", "deceptiveResponse": "Hayır, öyle bir şey olmuyor.", "absentResponse": "Hayır, böyle bedensel bir tepki yaşamıyorum." },
+    { "id": "q_anticipatory", "category": "cognitive", "text": "Bir sosyal etkinlikten günler önce endişelenmeye başladığınız olur mu?", "targetSymptom": "anticipatory_anxiety", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, bir hafta öncesinden kafamda senaryolar kurmaya başlıyorum, uykularım kaçıyor.", "deceptiveResponse": "Yok, en fazla o gün biraz heyecanlanırım.", "absentResponse": "Hayır, önceden endişelenmem." },
+    { "id": "q_performance", "category": "behavior", "text": "Topluluk önünde konuşmanız ya da bir şey sunmanız gerektiğinde neler yaşıyorsunuz?", "targetSymptom": "performance_fear", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Tam bir kâbus... sesim titriyor, aklımdaki her şey uçup gidiyor, mümkünse hep kaçarım.", "deceptiveResponse": "Biraz heyecanlanırım ama hallederim.", "absentResponse": "Sorun yaşamam, sunum yapmayı severim." },
+
+    { "id": "q_food_restriction", "category": "behavior", "text": "Yediğiniz miktarı bilinçli olarak kısıtlıyor musunuz?", "targetSymptom": "food_restriction", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Evet... günde çok az yiyorum, porsiyonları hep küçültüyorum. Böylesi daha güvenli geliyor.", "deceptiveResponse": "Hayır, gayet normal yiyorum, sadece sağlıklı besleniyorum.", "absentResponse": "Hayır, yeme miktarımı kısıtlamıyorum." },
+    { "id": "q_weight_fear", "category": "cognitive", "text": "Kilo almak sizi korkutuyor mu?", "targetSymptom": "weight_gain_fear", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Çok... bir kilo bile alsam her şey kontrolden çıkacakmış gibi hissediyorum.", "deceptiveResponse": "Hayır, kiloyu pek dert etmem.", "absentResponse": "Hayır, kilo almak beni korkutmuyor." },
+    { "id": "q_body_image", "category": "cognitive", "text": "Aynaya baktığınızda bedeninizi nasıl görüyorsunuz?", "targetSymptom": "body_image_distortion", "timeCost": 5, "rapportEffect": 2, "sensitive": true, "truthfulResponse": "Hâlâ çok kilolu görüyorum kendimi... herkes zayıfsın diyor ama ben öyle görmüyorum.", "deceptiveResponse": "Normal görüyorum, bir sorun yok.", "absentResponse": "Bedenimle ilgili algımda bir sorun olduğunu düşünmüyorum." },
+    { "id": "q_exercise", "category": "behavior", "text": "Egzersiz alışkanlıklarınızdan bahseder misiniz?", "targetSymptom": "excessive_exercise", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Her gün en az iki saat spor yapıyorum; yapamazsam çok huzursuz oluyorum, yediklerimi hak etmemiş gibi.", "deceptiveResponse": "Ara sıra yürüyüş yaparım, normal yani.", "absentResponse": "Düzenli ama abartısız spor yaparım." },
+    { "id": "q_food_rituals", "category": "behavior", "text": "Yemek yerken belirli kurallarınız ya da ritüelleriniz var mı?", "targetSymptom": "food_rituals", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Her lokmanın kalorisini hesaplıyorum, yemekleri küçücük parçalara bölüp tabakta ayırıyorum.", "deceptiveResponse": "Yok, herkes gibi yerim.", "absentResponse": "Hayır, yemekle ilgili özel kurallarım yok." },
+    { "id": "q_malnutrition", "category": "somatic", "text": "Halsizlik, baş dönmesi ya da sürekli üşüme yaşıyor musunuz?", "targetSymptom": "malnutrition_signs", "timeCost": 5, "rapportEffect": 1, "sensitive": false, "truthfulResponse": "Evet, ayağa kalkınca başım dönüyor, yaz günü bile üşüyorum.", "deceptiveResponse": "Hayır, gayet enerjik hissediyorum.", "absentResponse": "Hayır, böyle şikayetlerim yok." },
+    { "id": "q_seriousness", "category": "risk", "text": "Mevcut kilonuzun sağlığınız için bir risk oluşturabileceğini düşünüyor musunuz?", "targetSymptom": "seriousness_denial", "timeCost": 10, "rapportEffect": 3, "sensitive": true, "truthfulResponse": "Herkes abartıyor... bence gayet iyiyim, hatta biraz daha verebilirim.", "deceptiveResponse": "Belki biraz düşük olabilir, bilmiyorum.", "absentResponse": "Kilom sağlıklı aralıkta, bir risk görmüyorum." }
   ],
 
   "tests": [
@@ -222,6 +273,8 @@
     { "id": "gad7", "label": "GAD-7 Anksiyete Ölçeği", "targetDiagnosis": "gad", "timeCost": 10 },
     { "id": "pdss", "label": "Panik Bozukluk Şiddet Ölçeği (PDSS)", "targetDiagnosis": "panic", "timeCost": 10 },
     { "id": "ybocs", "label": "Yale-Brown Obsesif Kompulsif Ölçeği (Y-BOCS)", "targetDiagnosis": "ocd", "timeCost": 10 },
-    { "id": "pcl5", "label": "TSSB Kontrol Listesi (PCL-5)", "targetDiagnosis": "ptsd", "timeCost": 10 }
+    { "id": "pcl5", "label": "TSSB Kontrol Listesi (PCL-5)", "targetDiagnosis": "ptsd", "timeCost": 10 },
+    { "id": "lsas", "label": "Liebowitz Sosyal Anksiyete Ölçeği (LSAS)", "targetDiagnosis": "sad", "timeCost": 10 },
+    { "id": "eat26", "label": "Yeme Tutum Testi (EAT-26)", "targetDiagnosis": "an", "timeCost": 10 }
   ]
 }

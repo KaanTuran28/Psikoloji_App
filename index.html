@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Klinik tanı simülasyonu — hastayı görüşün, psikometrik test uygulayın ve doğru DSM-5 tanısını koyun." />
+<meta name="theme-color" content="#0b1220" />
 <title>PsikoTarama-Simülasyon</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" type="image/png" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -28,8 +33,19 @@
         <span id="rapport-value" class="vital-value">50/100</span>
       </div>
     </div>
+    <label class="difficulty-picker" title="Bir sonraki vakada geçerli olur">
+      <span class="vital-label">Zorluk</span>
+      <select id="difficulty-select"></select>
+    </label>
+    <button id="btn-mute" class="btn-icon" title="Ses aç/kapat (M)" aria-label="Ses efektlerini aç veya kapat" aria-pressed="false">🔊</button>
     <button id="btn-new-case" class="btn btn-primary" disabled>Yeni Vaka Başlat</button>
   </header>
+
+  <nav id="mobile-tabs" class="mobile-tabs" aria-label="Panel seçimi">
+    <button class="mobile-tab" data-panel="sidebar">🩺 Hasta</button>
+    <button class="mobile-tab mobile-tab--active" data-panel="interview">💬 Görüşme</button>
+    <button class="mobile-tab" data-panel="notepad">📝 Tanı</button>
+  </nav>
 
   <div class="layout">
 
@@ -54,7 +70,7 @@
 
       <section class="panel-section">
         <h3 class="panel-heading">📊 Test Sonuçları</h3>
-        <div id="test-results" class="test-results">
+        <div id="test-results" class="test-results" aria-live="polite" aria-label="Test sonuçları">
           <p class="muted-note">Henüz test uygulanmadı.</p>
         </div>
       </section>
@@ -71,12 +87,12 @@
     </aside>
 
     <!-- CENTER: Interview / Dialogue -->
-    <main class="panel interview">
+    <main class="panel interview panel--active">
       <h3 class="panel-heading">💬 Görüşme</h3>
       <div id="time-up-banner" class="time-up-banner hidden">
         ⏰ Süre doldu! Artık soru soramaz veya test uygulayamazsınız — elinizdeki bilgilerle tanınızı koyun.
       </div>
-      <div id="dialogue-log" class="dialogue-log">
+      <div id="dialogue-log" class="dialogue-log" role="log" aria-live="polite" aria-label="Görüşme kaydı">
         <div class="dialogue-entry dialogue-entry--system">Bir vaka başlatmak için sağ üstteki "Yeni Vaka Başlat" düğmesine basın.</div>
       </div>
       <div class="question-panel">
@@ -102,7 +118,7 @@
 </div>
 
 <!-- Start overlay -->
-<div id="start-overlay" class="overlay">
+<div id="start-overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Karşılama ekranı">
   <div class="overlay-card">
     <div id="start-loading">
       <h2>PsikoTarama-Simülasyon</h2>
@@ -120,13 +136,16 @@
         <li><strong>3. Not Alın</strong> — gözlemlediğiniz DSM-5 kriterlerini işaretleyin.</li>
         <li><strong>4. Tanı Koyun</strong> — süreniz dolmadan tanınızı onaylayın.</li>
       </ul>
+      <h3 class="difficulty-heading">Zorluk Seviyesi Seçin</h3>
+      <div id="difficulty-cards" class="difficulty-cards"></div>
       <button id="btn-start-first-case" class="btn btn-primary btn-large">İlk Vakayı Başlat</button>
+      <p class="shortcuts-hint">Klavye: <kbd>H</kbd> Hasta · <kbd>G</kbd> Görüşme · <kbd>T</kbd> Tanı · <kbd>Y</kbd> Yeni Vaka · <kbd>M</kbd> Ses</p>
     </div>
   </div>
 </div>
 
 <!-- Result overlay -->
-<div id="result-overlay" class="overlay hidden">
+<div id="result-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Vaka sonucu">
   <div class="overlay-card">
     <h2>Vaka Sonucu</h2>
     <div id="result-body"></div>
@@ -135,6 +154,7 @@
 </div>
 
 <script src="js/GameEngine.js"></script>
+<script src="js/sound.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

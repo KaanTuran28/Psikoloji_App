@@ -136,7 +136,172 @@ button {
 .rapport-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--accent-strong), var(--accent));
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+/* Rapport health states: red = patient may lie, amber = shaky trust */
+.rapport-fill--low {
+  background: linear-gradient(90deg, #dc2626, var(--danger));
+}
+
+.rapport-fill--mid {
+  background: linear-gradient(90deg, #d97706, var(--warning));
+}
+
+.vital-value.vital-warning {
+  color: var(--warning);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Difficulty picker (topbar) & difficulty cards (welcome overlay)        */
+/* ---------------------------------------------------------------------- */
+
+.difficulty-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.difficulty-picker select {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.difficulty-picker select:hover {
+  border-color: var(--accent);
+}
+
+.btn-icon {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 7px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 1;
+  transition: border-color 0.15s ease;
+}
+
+.btn-icon:hover {
+  border-color: var(--accent);
+}
+
+.shortcuts-hint {
+  margin: 14px 0 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.shortcuts-hint kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.difficulty-heading {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.difficulty-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 0 20px;
+}
+
+.difficulty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.difficulty-card:hover {
+  border-color: var(--accent);
+}
+
+.difficulty-card--selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.difficulty-card-icon {
+  font-size: 22px;
+}
+
+.difficulty-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.difficulty-card-desc {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.difficulty-card-stats {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Mobile tab navigation (hidden on desktop)                              */
+/* ---------------------------------------------------------------------- */
+
+.mobile-tabs {
+  display: none;
+  flex-shrink: 0;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.mobile-tab {
+  flex: 1;
+  padding: 11px 6px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.mobile-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -351,6 +516,30 @@ button {
   font-size: 12px;
 }
 
+/* Buttons that show a label + time cost side by side */
+.btn-question,
+.btn-test {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.btn-question-text {
+  min-width: 0;
+}
+
+.btn-cost {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.btn:hover:not(:disabled) .btn-cost {
+  color: var(--warning);
+}
+
 .test-results {
   display: flex;
   flex-direction: column;
@@ -553,11 +742,68 @@ button {
 }
 
 .question-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   overflow-y: auto;
   padding-right: 4px;
+}
+
+.question-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel-alt);
+  flex-shrink: 0;
+}
+
+.question-group summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.question-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.question-group summary:hover {
+  color: var(--accent);
+}
+
+.question-group-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.question-group-count {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.question-group summary::after {
+  content: "▾";
+  color: var(--text-muted);
+  font-size: 11px;
+  transition: transform 0.15s ease;
+}
+
+.question-group:not([open]) summary::after {
+  transform: rotate(-90deg);
+}
+
+.question-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px;
+  padding: 0 8px 8px;
 }
 
 .btn-question {
@@ -840,23 +1086,48 @@ button {
 /* Responsive                                                              */
 /* ---------------------------------------------------------------------- */
 
-@media (max-width: 1000px) {
+/* Wide desktop → slightly narrower side panels */
+@media (max-width: 1200px) {
   .layout {
-    grid-template-columns: 1fr;
-    grid-auto-rows: minmax(260px, auto);
-    overflow-y: auto;
+    grid-template-columns: 260px 1fr 290px;
   }
 
-  .question-buttons {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  .topbar {
+    gap: 20px;
+  }
+
+  .topbar-vitals {
+    gap: 18px;
   }
 }
 
-@media (max-width: 720px) {
+/* Tablet & below: single visible panel + tab navigation */
+@media (max-width: 900px) {
+  .mobile-tabs {
+    display: flex;
+  }
+
+  .layout {
+    display: block;
+    background: var(--bg-app);
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .layout > .panel {
+    display: none;
+    height: 100%;
+  }
+
+  .layout > .panel.panel--active {
+    display: flex;
+  }
+
   .topbar {
     flex-wrap: wrap;
     row-gap: 10px;
     padding: 10px 16px;
+    gap: 12px 20px;
   }
 
   .topbar-title {
@@ -875,31 +1146,64 @@ button {
     min-width: 0;
   }
 
-  .panel {
-    padding: 14px;
+  .question-panel {
+    max-height: 45%;
+  }
+
+  .question-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 
   .dialogue-entry {
     max-width: 92%;
   }
 
-  .question-buttons {
-    grid-template-columns: 1fr;
-  }
-
   .overlay-card {
     padding: 20px;
     width: 94%;
   }
+
+  .difficulty-cards {
+    gap: 8px;
+  }
 }
 
+/* Phones */
+@media (max-width: 600px) {
+  .panel {
+    padding: 12px;
+  }
+
+  .question-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .difficulty-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .difficulty-card {
+    flex-direction: row;
+    flex-wrap: wrap;
+    text-align: left;
+    align-items: baseline;
+    gap: 4px 8px;
+    padding: 10px 12px;
+  }
+
+  .difficulty-card-desc {
+    flex-basis: 100%;
+  }
+}
+
+/* Small phones */
 @media (max-width: 480px) {
   body {
     font-size: 13px;
   }
 
   .topbar {
-    gap: 8px 16px;
+    gap: 8px 12px;
   }
 
   .topbar-logo {
@@ -914,9 +1218,13 @@ button {
     min-width: 0;
   }
 
+  .difficulty-picker .vital-label {
+    display: none;
+  }
+
   #btn-new-case {
-    padding: 10px 14px;
-    font-size: 12.5px;
+    padding: 10px 12px;
+    font-size: 12px;
   }
 
   .btn {
@@ -931,5 +1239,10 @@ button {
 
   .history-entry {
     flex-wrap: wrap;
+  }
+
+  .welcome-steps li {
+    font-size: 12px;
+    padding: 8px 10px;
   }
 }

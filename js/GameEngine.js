@@ -6,11 +6,59 @@
  * No frameworks, no build step — pure ES6, runs directly in the browser.
  */
 
-const START_TIME_MINUTES = 45;
-const START_RAPPORT = 50;
 const MAX_RAPPORT = 100;
 const MIN_RAPPORT = 0;
-const LOW_RAPPORT_LIE_THRESHOLD = 40; // below this, sensitive questions risk a deceptive answer
+
+/**
+ * Difficulty presets. Each level tunes:
+ *  - startTime / startRapport: session starting resources
+ *  - lieThreshold: below this rapport, sensitive questions risk deception
+ *  - lieMultiplier: how fast lie chance grows as rapport drops
+ *  - testTimeMultiplier: psychometric tests cost more time on harder levels
+ *  - distractorCount: how many distractors muddy the symptom picture
+ *  - vagueTestResults: hard mode hides exact test percentages (verdict only)
+ */
+const DIFFICULTIES = {
+  kolay: {
+    id: "kolay",
+    label: "Kolay",
+    icon: "🌱",
+    description: "Bol süre, güvenli başlangıç. Hasta nadiren gerçeği saklar — mekanikleri öğrenmek için ideal.",
+    startTime: 60,
+    startRapport: 60,
+    lieThreshold: 30,
+    lieMultiplier: 1.0,
+    testTimeMultiplier: 1,
+    distractorCount: 1,
+    vagueTestResults: false
+  },
+  normal: {
+    id: "normal",
+    label: "Normal",
+    icon: "⚖️",
+    description: "Dengeli süre ve güven düzeyi. Standart klinik deneyim.",
+    startTime: 45,
+    startRapport: 50,
+    lieThreshold: 40,
+    lieMultiplier: 1.5,
+    testTimeMultiplier: 1,
+    distractorCount: 1,
+    vagueTestResults: false
+  },
+  zor: {
+    id: "zor",
+    label: "Zor",
+    icon: "🔥",
+    description: "Kısıtlı süre, temkinli hasta, iki dikkat dağıtıcı unsur ve yalnızca kaba test sonuçları. Deneyimli klinisyenler için.",
+    startTime: 30,
+    startRapport: 40,
+    lieThreshold: 50,
+    lieMultiplier: 2.0,
+    testTimeMultiplier: 1.5,
+    distractorCount: 2,
+    vagueTestResults: true
+  }
+};
 
 class ClinicalEngine {
   /**
@@ -19,8 +67,9 @@ class ClinicalEngine {
   constructor(data) {
     this.data = data;
     this.patient = null;
-    this.timeRemaining = START_TIME_MINUTES;
-    this.rapport = START_RAPPORT;
+    this.difficulty = DIFFICULTIES.normal;
+    this.timeRemaining = this.difficulty.startTime;
+    this.rapport = this.difficulty.startRapport;
     this.dialogueLog = [];
     this.askedQuestionIds = new Set();
     this.completedTestIds = new Set();
@@ -38,12 +87,14 @@ class ClinicalEngine {
   /**
    * Combines one random RootDiagnosis with one random Distractor to build
    * the current session's patient, and resets all session state.
+   * @param {string} [difficultyId] - "kolay" | "normal" | "zor"
    */
-  generateCase() {
+  generateCase(difficultyId = "normal") {
+    this.difficulty = DIFFICULTIES[difficultyId] || DIFFICULTIES.normal;
     const { rootDiagnosis, distractors, patientNames, occupations } = this.data;
 
     const root = pickRandom(rootDiagnosis);
-    const distractor = pickRandom(distractors);
+    const chosenDistractors = pickRandomDistinct(distractors, this.difficulty.distractorCount);
     const name = pickRandom(patientNames);
     const occupation = pickRandom(occupations);
     const age = 18 + Math.floor(Math.random() * 45);
@@ -53,12 +104,20 @@ class ClinicalEngine {
     // real complaints too, but irrelevant noise for the diagnosis itself.
     const activeSymptoms = new Set([
       ...root.symptomPool.map((s) => s.id),
-      ...distractor.symptomPool.map((s) => s.id)
+      ...chosenDistractors.flatMap((d) => d.symptomPool.map((s) => s.id))
     ]);
 
-    // Only the distractor's surface story is used here, never the root
-    // diagnosis — the case brief must not leak which diagnosis is correct.
-    const caseBrief = `${name}, ${age} yaşında bir ${occupation}. ${distractor.referralReason}`;
+    // Only the primary distractor's surface story is used here, never the
+    // root diagnosis — the case brief must not leak which diagnosis is
+    // correct. Extra distractors (hard mode) stay hidden as pure noise.
+    const template = this.data.caseBriefTemplates && this.data.caseBriefTemplates.length
+      ? pickRandom(this.data.caseBriefTemplates)
+      : "{name}, {age} yaşında bir {occupation}. {referral}";
+    const caseBrief = template
+      .replace("{name}", name)
+      .replace("{age}", age)
+      .replace("{occupation}", occupation)
+      .replace("{referral}", chosenDistractors[0].referralReason);
 
     this.patient = {
       name,
@@ -66,14 +125,14 @@ class ClinicalEngine {
       occupation,
       rootDiagnosisId: root.id,
       rootDiagnosisLabel: root.label,
-      distractorId: distractor.id,
-      distractorLabel: distractor.label,
+      distractorIds: chosenDistractors.map((d) => d.id),
+      distractorLabel: chosenDistractors.map((d) => d.label).join(" + "),
       caseBrief,
       activeSymptoms
     };
 
-    this.timeRemaining = START_TIME_MINUTES;
-    this.rapport = START_RAPPORT;
+    this.timeRemaining = this.difficulty.startTime;
+    this.rapport = this.difficulty.startRapport;
     this.dialogueLog = [];
     this.askedQuestionIds = new Set();
     this.completedTestIds = new Set();
@@ -133,9 +192,10 @@ class ClinicalEngine {
       return { text: question.absentResponse, truthful: true };
     }
 
+    const { lieThreshold, lieMultiplier } = this.difficulty;
     const lieRoll = Math.random() * 100;
-    const lieChance = question.sensitive && this.rapport < LOW_RAPPORT_LIE_THRESHOLD
-      ? (LOW_RAPPORT_LIE_THRESHOLD - this.rapport) * 1.5
+    const lieChance = question.sensitive && this.rapport < lieThreshold
+      ? (lieThreshold - this.rapport) * lieMultiplier
       : 0;
 
     if (lieRoll < lieChance) {
@@ -161,7 +221,7 @@ class ClinicalEngine {
     const test = this.data.tests.find((t) => t.id === testId);
     if (!test || this.completedTestIds.has(testId)) return null;
 
-    this._spendTime(test.timeCost || 10);
+    this._spendTime(this.getTestTimeCost(test));
     this.completedTestIds.add(testId);
 
     const targetRoot = this.data.rootDiagnosis.find((r) => r.id === test.targetDiagnosis);
@@ -173,16 +233,25 @@ class ClinicalEngine {
     const score = Math.round((presentSymptoms / totalSymptoms) * 100);
     const verdict = score >= 65 ? "Yüksek" : score >= 30 ? "Orta" : "Düşük";
 
-    const result = { label: test.label, score, verdict };
+    // Hard mode reports only the coarse verdict, never the exact percentage.
+    const vague = this.difficulty.vagueTestResults;
+    const result = { label: test.label, score, verdict, vague };
     this.testResults[testId] = result;
 
     this.dialogueLog.push({
       speaker: "system",
-      text: `${test.label} uygulandı. Sonuç: %${score} (${verdict} risk düzeyi).`
+      text: vague
+        ? `${test.label} uygulandı. Sonuç: ${verdict} risk düzeyi.`
+        : `${test.label} uygulandı. Sonuç: %${score} (${verdict} risk düzeyi).`
     });
 
     this._checkTimeUp();
     return result;
+  }
+
+  /** Effective time cost of a test on the current difficulty level. */
+  getTestTimeCost(test) {
+    return Math.round((test.timeCost || 10) * this.difficulty.testTimeMultiplier);
   }
 
   // ---------------------------------------------------------------------
@@ -240,13 +309,11 @@ class ClinicalEngine {
     const criteriaScore = Math.round(((precision + recall) / 2) * 40);
     const totalScore = diagnosisScore + criteriaScore;
 
-    const distractor = this.data.distractors.find((d) => d.id === this.patient.distractorId);
-
     this.finalResult = {
       diagnosisCorrect,
       chosenDiagnosisLabel: this._labelForDiagnosis(diagnosisId),
       correctDiagnosisLabel: root.label,
-      distractorLabel: distractor.label,
+      distractorLabel: this.patient.distractorLabel,
       truePositives,
       falsePositives,
       missed: correctCriteriaIds.size - truePositives,
@@ -255,7 +322,9 @@ class ClinicalEngine {
       score: totalScore,
       timeRemaining: this.timeRemaining,
       rapport: this.rapport,
-      feedback: this._buildFeedback(diagnosisCorrect, root, selected, correctCriteriaIds, distractor)
+      difficultyId: this.difficulty.id,
+      difficultyLabel: `${this.difficulty.icon} ${this.difficulty.label}`,
+      feedback: this._buildFeedback(diagnosisCorrect, root, selected, correctCriteriaIds, this.patient.distractorLabel)
     };
 
     this.diagnosisSubmitted = true;
@@ -275,7 +344,7 @@ class ClinicalEngine {
    * which other diagnosis the player likely confused it with).
    * @private
    */
-  _buildFeedback(diagnosisCorrect, root, selected, correctCriteriaIds, distractor) {
+  _buildFeedback(diagnosisCorrect, root, selected, correctCriteriaIds, distractorLabel) {
     const allCriteria = this.getAllCriteria();
     const criteriaById = new Map(allCriteria.map((c) => [c.id, c]));
 
@@ -341,7 +410,7 @@ class ClinicalEngine {
       askedNotMarked: missedCriteria.filter((c) => !c.neverAsked),
       falsePositiveCriteria,
       confusedWithLabel: confusedWith ? confusedWith[0] : null,
-      distractorLabel: distractor.label,
+      distractorLabel,
       rapportNote
     };
   }
@@ -395,6 +464,17 @@ class ClinicalEngine {
 
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/** Picks `count` distinct random elements (order random, no repeats). */
+function pickRandomDistinct(arr, count) {
+  const pool = [...arr];
+  const picked = [];
+  const n = Math.min(count || 1, pool.length);
+  for (let i = 0; i < n; i++) {
+    picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  }
+  return picked;
 }
 
 function clamp(value, min, max) {
